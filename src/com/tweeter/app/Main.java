@@ -7,7 +7,7 @@ public class Main {
 		Game game = new Game("Tweeter");
 		try {
 			AppGameContainer app = new AppGameContainer(game);
-			app.setVSync(true);
+			app.setVSync(false);
 			app.setShowFPS(true);
 			app.setDisplayMode(500, 500, false);
 			app.start();

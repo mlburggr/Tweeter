@@ -2,7 +2,8 @@ package com.tweeter.app;
 
 public class Tweet {
 	private int[] notes;
-	
+	//TODO: no arg Constructor 
+	//		Single arg constructor
 	public Tweet(Bird parentA, Bird parentB){
 		
 	}
