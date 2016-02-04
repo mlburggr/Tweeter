@@ -19,7 +19,7 @@ public class Game extends StateBasedGame{
 
 	public Game(String title) {
 		super(title);
-		this.map = new Map(5,5); //change to bird
+		this.map = new Map(5,5);
 	}
 
 
