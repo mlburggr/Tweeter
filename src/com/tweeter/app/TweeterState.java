@@ -14,8 +14,8 @@ public class TweeterState extends BasicGameState {
 	private int height;
 	private Map map;
 	private Bird userBird;
-	public int mapSizeX;
-	public int mapSizeY;
+	public int mapSizeX = 1;
+	public int mapSizeY = 1;
 	
 	public static final int ID = 2;
 
@@ -59,6 +59,8 @@ public class TweeterState extends BasicGameState {
 			createMap();
 		}
 		
+		
+		
 		for(int j = 0; j < mapSizeX; j++){
 			for(int k = 0; k < mapSizeY; k++){
 				Cell c = map.getCellAt(j, k);
@@ -69,6 +71,8 @@ public class TweeterState extends BasicGameState {
 				} else {
 					graphics.setColor(Color.white);
 				}
+				
+				//TODO real number arithmetic is real
 				graphics.fillRect(j*(width/mapSizeX), k*(height/mapSizeY), (width/mapSizeX), (height/mapSizeY));
 				
 			}
@@ -87,8 +91,16 @@ public class TweeterState extends BasicGameState {
 
 	@Override
 	public void update(GameContainer container, StateBasedGame game, int arg2) throws SlickException {
-		// TODO Auto-generated method stub
-		
+			
+			// TODO find out how to resize window
+			/*/  Make sure tiles fit in window
+			//  window_width - (window_width mod size_of_board)
+			//  
+			newWidth = this.width % mapSizeX ;  
+			newHeight = this.height % mapSizeY ;
+			
+			
+			assert width==height : "Window Width does not match Height";*/
 	}
 	
 	public void keyReleased(int key, char c){

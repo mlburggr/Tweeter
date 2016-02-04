@@ -61,6 +61,8 @@ public class NewGameSettingsState extends BasicGameState {
 			System.out.println("Must be larger than 4");
 			return;
 		}
+		
+		//This is really fucking lame, There's no abstraction for this?
 		if (x >= playButtonArea.getX() && 
 			x <= playButtonArea.getX() + playButtonArea.getWidth() && 
 			y >= playButtonArea.getY() && 
