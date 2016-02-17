@@ -13,7 +13,7 @@ public class TweeterState extends BasicGameState {
 	private int width;
 	private int height;
 	private Map map;
-	private Bird userBird;
+	private BirdPlayer userBird;
 	public int mapSizeX = 1;
 	public int mapSizeY = 1;
 	
@@ -40,14 +40,14 @@ public class TweeterState extends BasicGameState {
 			}
 		}
 		
-		this.userBird = new Bird(0,1,true);
+		this.userBird = new BirdPlayer(0,1,true);
 		map.addBird(userBird);
 		
 		map.setNeighbors();
 		
-		Bird b = new Bird(0,0);
+		Bird b = new BirdComputer(4,4);
 		map.addBird(b);
-		Bird b2 = new Bird(4,3);
+		Bird b2 = new BirdComputer(5,5);
 		map.addBird(b2);
 	
 	}
