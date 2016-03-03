@@ -1,5 +1,8 @@
 package com.tweeter.app;
 
+import java.util.ArrayList;
+import java.util.Random;
+
 import org.newdawn.slick.Color;
 import org.newdawn.slick.GameContainer;
 import org.newdawn.slick.Graphics;
@@ -17,12 +20,17 @@ public class TweeterState extends BasicGameState {
 	public int mapSizeX = 1;
 	public int mapSizeY = 1;
 	
+	private int timePassed;
+	private ArrayList<BirdComputer> testBirds;
+	
 	public static final int ID = 2;
 
 	@Override
 	public void init(GameContainer container, StateBasedGame game) throws SlickException {
 		this.width = 500;
 		this.height = 500;
+		timePassed = 0;
+		testBirds = new ArrayList<BirdComputer>();
 	}
 	
 	private void createMap(){
@@ -45,10 +53,17 @@ public class TweeterState extends BasicGameState {
 		
 		map.setNeighbors();
 		
-		Bird b = new BirdComputer(4,4);
-		map.addBird(b);
-		Bird b2 = new BirdComputer(5,5);
-		map.addBird(b2);
+//		Bird b = new BirdComputer(4,4);
+//		map.addBird(b);
+//		Bird b2 = new BirdComputer(5,5);
+//		map.addBird(b2);
+		
+		Random random = new Random();
+		for (int i = 0; i<3; i++) {
+			BirdComputer b = new BirdComputer(random.nextInt(mapSizeX), random.nextInt(mapSizeY));
+			testBirds.add(b);
+			map.addBird(b);
+		}
 	
 	}
 
@@ -58,7 +73,6 @@ public class TweeterState extends BasicGameState {
 		if(map == null){
 			createMap();
 		}
-		
 		
 		
 		for(int j = 0; j < mapSizeX; j++){
@@ -90,7 +104,7 @@ public class TweeterState extends BasicGameState {
 	}
 
 	@Override
-	public void update(GameContainer container, StateBasedGame game, int arg2) throws SlickException {
+	public void update(GameContainer container, StateBasedGame game, int delta) throws SlickException {
 			
 			// TODO find out how to resize window
 			/*/  Make sure tiles fit in window
@@ -101,6 +115,15 @@ public class TweeterState extends BasicGameState {
 			
 			
 			assert width==height : "Window Width does not match Height";*/
+		
+		timePassed += delta;
+		if (timePassed > 1250) {
+			timePassed = 0;
+			for (BirdComputer b : testBirds) {
+				b.randomMove(map);
+			}
+		}
+		
 	}
 	
 	public void keyReleased(int key, char c){
