@@ -23,6 +23,7 @@ public class TweeterState extends BasicGameState {
 	public int mapSizeY = 1;
 	private int points = 0;
 	private String noteToDraw = "";
+	private ArrayList<Character> notesToAdd;
 	
 	/*
 	 * Game Modes
@@ -53,6 +54,7 @@ public class TweeterState extends BasicGameState {
 		timePassed = 0;
 		testBirds = new ArrayList<BirdComputer>();
 		font = new AngelCodeFont("fonts/demo2.fnt","fonts/demo2_00.tga");
+		notesToAdd = new ArrayList<Character>();
 	}
 	
 	private void createMap(){
@@ -175,47 +177,50 @@ public class TweeterState extends BasicGameState {
 			switch(key){
 			case Input.KEY_Q:
 				//add note
+				notesToAdd.add('q');
 				noteToDraw += "Q";
 				break;
 			case Input.KEY_W:
 				//add note
+				notesToAdd.add('w');
 				noteToDraw += "W";
 				break;
 			case Input.KEY_E:
 				//add note
+				notesToAdd.add('e');
 				noteToDraw += "E";
-				break;
-			case Input.KEY_R:
-				//add note
-				noteToDraw += "R";
 				break;
 			case Input.KEY_A:
 				//add note
+				notesToAdd.add('a');
 				noteToDraw += "A";
 				break;
 			case Input.KEY_S:
 				//add note
+				notesToAdd.add('s');
 				noteToDraw += "S";
 				break;
 			case Input.KEY_D:
 				//add note
+				notesToAdd.add('d');
 				noteToDraw += "D";
-				break;
-			case Input.KEY_F:
-				//add note
-				noteToDraw += "F";
 				break;
 			case Input.KEY_TAB:
 				//exit tab composition mode
 				gameMode = 1;
 				exiting = true;
 				noteToDraw = "";
+				char[] cs = new char[notesToAdd.size()];
+				for(int i=0; i<cs.length; i++){
+					cs[i] = notesToAdd.get(i);
+				}
+				userBird.setTweet(new Tweet(cs));
 				break;
 				
 			}
 		}
 		
-		if(gameMode == 1){
+		if(gameMode == 1 && !exiting){
 		if(userBird.getEnergy() >= 5){
 		if(key == Input.KEY_UP){
 				map.moveUp(userBird, currentPosX, currentPosY);
@@ -234,9 +239,7 @@ public class TweeterState extends BasicGameState {
 			System.out.println("right");
 		}
 		if(key == Input.KEY_TAB){
-			if(!exiting){
 				gameMode = 2;
-			}
 		}
 		userBird.setEnergy(userBird.getEnergy() - 5);
 		}

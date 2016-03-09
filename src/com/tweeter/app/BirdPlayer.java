@@ -45,4 +45,8 @@ public class BirdPlayer extends Bird{
 		return mode == 2;
 	}
 	
+	public void tweet(){
+		//TODO: make this
+	}
+	
 }
