@@ -3,6 +3,7 @@ package com.tweeter.app;
 import java.util.ArrayList;
 import java.util.Random;
 
+import org.newdawn.slick.AngelCodeFont;
 import org.newdawn.slick.Color;
 import org.newdawn.slick.GameContainer;
 import org.newdawn.slick.Graphics;
@@ -16,9 +17,28 @@ public class TweeterState extends BasicGameState {
 	private int width;
 	private int height;
 	private Map map;
+	private AngelCodeFont font;
 	private BirdPlayer userBird;
 	public int mapSizeX = 1;
 	public int mapSizeY = 1;
+	private String noteToDraw = "";
+	
+	/*
+	 * Game Modes
+	 * ------
+	 * These modes are used for processing input.
+	 * They are defined by an integer. May change to
+	 * a special type or enumeration later.
+	 * 
+	 * 1: Move Mode -- the player can move around and
+	 * 					enter Composition Mode using tab
+	 * 2: Composition Mode --  reads keys Q-R and A-F to correspond
+	 * 					to different notes and add it to
+	 * 					the player's tweet. When Tab is pressed again,
+	 * 					tweet compositon mode is exited and the player
+	 * 					bird will tweet the new tweet.
+	 */
+	private int gameMode = 1; 
 	
 	private int timePassed;
 	private ArrayList<BirdComputer> testBirds;
@@ -31,6 +51,7 @@ public class TweeterState extends BasicGameState {
 		this.height = 500;
 		timePassed = 0;
 		testBirds = new ArrayList<BirdComputer>();
+		font = new AngelCodeFont("fonts/demo2.fnt","fonts/demo2_00.tga");
 	}
 	
 	private void createMap(){
@@ -75,6 +96,7 @@ public class TweeterState extends BasicGameState {
 		}
 		
 		
+		
 		for(int j = 0; j < mapSizeX; j++){
 			for(int k = 0; k < mapSizeY; k++){
 				Cell c = map.getCellAt(j, k);
@@ -99,6 +121,14 @@ public class TweeterState extends BasicGameState {
 		}
 		for (int i = 0; i <= this.height; i += (width/mapSizeX)){
 			graphics.drawLine(0, i, this.width, i);
+		}
+		
+		if(gameMode == 2) { //Composition Mode overlay
+			graphics.setColor(Color.gray);
+			graphics.fillRect(100, 100, 300, 150);
+			if(noteToDraw != null){
+				font.drawString(150, 150, noteToDraw);
+			}
 		}
 		
 	}
@@ -132,6 +162,54 @@ public class TweeterState extends BasicGameState {
 		int currentPosX = userBird.getPosX();
 		int currentPosY = userBird.getPosY();
 		
+		System.out.println("mode is "+gameMode);
+		boolean exiting = false;
+		if(gameMode == 2){
+			switch(key){
+			case Input.KEY_Q:
+				//add note
+				noteToDraw += "Q";
+				break;
+			case Input.KEY_W:
+				//add note
+				noteToDraw += "W";
+				break;
+			case Input.KEY_E:
+				//add note
+				noteToDraw += "E";
+				break;
+			case Input.KEY_R:
+				//add note
+				noteToDraw += "R";
+				break;
+			case Input.KEY_A:
+				//add note
+				noteToDraw += "A";
+				break;
+			case Input.KEY_S:
+				//add note
+				noteToDraw += "S";
+				break;
+			case Input.KEY_D:
+				//add note
+				noteToDraw += "D";
+				break;
+			case Input.KEY_F:
+				//add note
+				noteToDraw += "F";
+				break;
+			case Input.KEY_TAB:
+				//exit tab composition mode
+				gameMode = 1;
+				exiting = true;
+				noteToDraw = "";
+				break;
+				
+			}
+		}
+		
+		if(gameMode == 1){
+		
 		if(key == Input.KEY_UP){
 				map.moveUp(userBird, currentPosX, currentPosY);
 				System.out.println("up");
@@ -148,13 +226,25 @@ public class TweeterState extends BasicGameState {
 			map.moveRight(userBird, currentPosX, currentPosY);
 			System.out.println("right");
 		}
+		if(key == Input.KEY_TAB){
+			if(!exiting){
+				gameMode = 2;
+			}
+		}
 		
+		}
+		
+
 	}
 
 	@Override
 	public int getID() {
 		// TODO Auto-generated method stub
 		return ID;
+	}
+	
+	public int getCurrentMode(){
+		return gameMode;
 	}
 	
 
