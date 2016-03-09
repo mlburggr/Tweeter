@@ -21,6 +21,7 @@ public class TweeterState extends BasicGameState {
 	private BirdPlayer userBird;
 	public int mapSizeX = 1;
 	public int mapSizeY = 1;
+	private int points = 0;
 	private String noteToDraw = "";
 	
 	/*
@@ -103,7 +104,7 @@ public class TweeterState extends BasicGameState {
 				if(c.hasBird() && c.getBird().isUserBird()){
 					graphics.setColor(Color.gray);
 				} else if(c.hasBird()){
-					graphics.setColor(Color.black);
+					graphics.setColor(Color.cyan);
 				} else {
 					graphics.setColor(Color.white);
 				}
@@ -122,6 +123,12 @@ public class TweeterState extends BasicGameState {
 		for (int i = 0; i <= this.height; i += (width/mapSizeX)){
 			graphics.drawLine(0, i, this.width, i);
 		}
+		
+		font.drawString(350, 5, "Points:"+points, Color.black);
+		font.drawString(350, 35, "Energy:"+userBird.getEnergy(), Color.black);
+		font.drawString(350, 65, "Health:"+userBird.getHealth(), Color.black);
+		
+		
 		
 		if(gameMode == 2) { //Composition Mode overlay
 			graphics.setColor(Color.gray);
@@ -209,7 +216,7 @@ public class TweeterState extends BasicGameState {
 		}
 		
 		if(gameMode == 1){
-		
+		if(userBird.getEnergy() >= 5){
 		if(key == Input.KEY_UP){
 				map.moveUp(userBird, currentPosX, currentPosY);
 				System.out.println("up");
@@ -230,6 +237,8 @@ public class TweeterState extends BasicGameState {
 			if(!exiting){
 				gameMode = 2;
 			}
+		}
+		userBird.setEnergy(userBird.getEnergy() - 5);
 		}
 		
 		}
