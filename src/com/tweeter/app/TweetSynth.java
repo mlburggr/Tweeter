@@ -55,8 +55,5 @@ public class TweetSynth extends SynthCircuit{
 		}
 	}
 
-<<<<<<< HEAD
+
 }
-=======
-}
->>>>>>> 99e091ccfee9dea685477d94aa618e05d327e646
