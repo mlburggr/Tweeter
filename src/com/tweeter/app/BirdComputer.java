@@ -16,7 +16,7 @@ public class BirdComputer extends Bird{
 
 	@Override
 	void setMovingTowards(Bird b) {
-		// TODO Auto-generated method stub
+		this.movingTowards = b;
 		
 	}
 	
@@ -46,6 +46,7 @@ public class BirdComputer extends Bird{
 		return false;
 	}
 	
+	// Prototype implementation of NPC birds normal movements
 	public void randomMove(Map map) {
 		Random random = new Random();
 		int n = random.nextInt(4);
@@ -53,6 +54,26 @@ public class BirdComputer extends Bird{
 		else if (n==1) { map.moveDown(this, this.getPosX(), this.getPosY()); }
 		else if (n==2) { map.moveLeft(this, this.getPosX(), this.getPosY()); }
 		else { map.moveRight(this, this.getPosX(), this.getPosY()); }
+	}
+	
+	// Current prototype implementation of moving towards user bird
+	public void moveTowards(Map map) {
+		int x = this.movingTowards.getPosX();
+		int y = this.movingTowards.getPosY();
+		int distX = Math.abs(this.getPosX() - x);
+		int distY = Math.abs(this.getPosY() - y);
+		if (distX >= distY) {
+			if (distX!=1) {
+				if (x > this.getPosX()) { map.moveRight(this, this.getPosX(), this.getPosY()); }
+				else { map.moveLeft(this, this.getPosX(), this.getPosY()); }
+			}
+		}
+		else {
+			if (distY!=1) {
+				if (y > this.getPosY()) { map.moveDown(this, this.getPosX(), this.getPosY()); }
+				else { map.moveUp(this, this.getPosX(), this.getPosY()); }
+			}
+		}
 	}
 	
 }
