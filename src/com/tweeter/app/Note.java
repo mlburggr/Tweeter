@@ -11,6 +11,10 @@ public enum Note {
 	private final char name;
 	private final int semi;
 	
+	public static final int SUM = A.ordinal() + S.ordinal() + D.ordinal() + Q.ordinal() + W.ordinal() + E.ordinal();
+	public static final double DURATION = 0.42;
+	
+	
 	Note(char c, int i){
 		this.name = c;
 		this.semi = i;}

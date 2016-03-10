@@ -1,7 +1,8 @@
 package com.tweeter.app;
 import java.util.LinkedList;
-import com.tweeter.app.Note;
 
+import com.tweeter.app.Note;
+import java.lang.Math.*;
 
 /**
  * 
@@ -45,8 +46,51 @@ public class Tweet extends LinkedList<Note>{
 	 * 					positive -> similar
 	 */
 	
-	public static double compare(Tweet listener, Tweet tweeter){
-		return 0.0;
+	public static double compare(Tweet heard, Tweet tweeted){
+		// LevenshteinDistance from wikipedia
+		int hsize = heard.size();
+		int tsize = tweeted.size();
+
+		if (hsize == 0) return tsize;
+		if (tsize == 0) return hsize;
+
+		// to arrays
+		final Note [] h = heard.toArray(new Note[0]);
+		final Note [] t = heard.toArray(new Note[0]);
+
+
+		// create two work vectors of integer distances
+		int[] v0 = new int[tsize + 1];
+		int[] v1 = new int[tsize + 1];
+
+		// initialize v0 (the previous row of distances)
+		// this row is A[0][i]: edit distance for an empty s
+		// the distance is just the number of characters to delete from t
+		for (int i = 0; i < v0.length; i++)
+			v0[i] = i;
+
+		for (int i = 0; i < hsize; i++)
+		{
+			// calculate v1 (current row distances) from the previous row v0
+
+			// first element of v1 is A[i+1][0]
+			//   edit distance is delete (i+1) chars from s to match empty t
+			v1[0] = i + 1;
+
+			// use formula to fill in the rest of the row
+			for (int j = 0; j < tsize; j++)
+			{
+				int cost = Note.getInterval(h[i], t[j]);
+				v1[j + 1] = Math.min(v1[j] + h[i].ordinal(), 
+						Math.min(v0[j + 1] + t[j].ordinal(), v0[j] + cost) );
+			}
+
+			// copy v1 (current row) to v0 (previous row) for next iteration
+			for (int j = 0; j < v0.length; j++)
+				v0[j] = v1[j];
+		}
+
+		return Math.log(v1[tsize]/(Note.SUM * hsize));
 	}
 	
 	/**

@@ -32,15 +32,7 @@ public class TweetSynth extends SynthCircuit{
 	
 	private static double[] e3_Dat = { 0.4,  1,
 								       0.02, 0};
-	/**
-	 * Frequency step of one semitone in hz. (2 ^ 1/12)
-	 */
-	public static final double SEMITONE = 1.059463094;	
-	
-	/**
-	 * Base frequency (A2)
-	 */
-	public static final double BASE = 110.0;		
+		
 	
 	
 	public TweetSynth() {
