@@ -1,50 +1,89 @@
 package com.tweeter.app;
 
-import com.softsynth.jsyn.*;
+import com.jsyn.*;
+import com.jsyn.data.Function;
+import com.jsyn.ports.UnitInputPort;
+import com.jsyn.ports.UnitOutputPort;
+import com.jsyn.unitgen.*;
 
-public class TweetSynth extends SynthCircuit{
-	// Line
-	private LineOut line;
+public class TweetSynth extends Circuit{
+	// Constants
+	private static final int NUMUNITS = 3;
+	private static final int HARMONIC1 = 3;
+	private static final int HARMONIC2 = 5;
+	 
+	  	//Holy shit I can't believe that works...
+	private static Function harms[] = 
+		{ new Function() { public double evaluate( double x ){
+	  								  return  HARMONIC1 * x;}}
+		, new Function() { public double evaluate( double x ){
+		  							  return  HARMONIC2 * x;}}
+		};
+	
+	private static Function divider = 
+			new Function() { public double evaluate( double x ){
+							 return  x/NUMUNITS; } };
+
+	
+	// Ports
+	public UnitInputPort frequency;
+	public UnitOutputPort output;
+	public PassThrough freqPassThru;
+	public PassThrough sigPassThru;
+	
+	public FunctionEvaluator[] harmUnits;
+	public FunctionEvaluator dividerUnit;
 	
 	// Oscillators
-	private SineOscillator s1_Osc;
-	private SineOscillator s2_Osc;
-	private SineOscillator s3_Osc;
+	private SineOscillator[] sineOscs;
 	
-	// Envelopes
-	private SynthEnvelope e1_Env;
-	private SynthEnvelope e2_Env;
-	private SynthEnvelope e3_Env;
+	// Amplitude Envelope Players
+	private VariableRateMonoReader[] ampEnvs;
 	
-	// Envelope player
-	private EnvelopePlayer e1_Ply;
-	private EnvelopePlayer e2_Ply;
-	private EnvelopePlayer e3_Ply;
-	
-	// Data for Envelopes
-	private static double[] e1_Dat = { 0.02, 1,
-									   0.2,  0.5,
-									   0.1,  0.6,
-									   0.1,  0};
-	
-	private static double[] e2_Dat = { 0.32, 1,
-									   0.1,  0};
-	
-	private static double[] e3_Dat = { 0.4,  1,
-								       0.02, 0};
+	// Data for amp Envelopes				 // First Envelope
+	private  double[][] ampEnvDats = {{ 0.02, 1,
+										0.2,  0.5,
+									    0.1,  0.6,
+									    0.1,  0},
+									         // Second Envelope
+	                                  { 0.32, 1,
+									    0.1,  0},
+									         // Third Envelope
+	                                  { 0.4,  1,
+								        0.02, 0}};
 		
 	
 	
 	public TweetSynth() {
 		super();
-		try{
-			Synth.startEngine(0);
-			s1_Osc  = new SineOscillator();
-		} catch( SynthException e )
-		{
-             System.out.println( "Caught " + e );
-             e.printStackTrace();
+		
+		
+		freqPassThru = new PassThrough();
+		sigPassThru =new PassThrough();
+		addPort( frequency = freqPassThru.input );
+		addPort( output = dividerUnit.output );
+		
+		//	Init Circuit
+		for (int i = 0; i < NUMUNITS; i++) {
+			add( sineOscs[i]  = new SineOscillator() );
+			ampEnvs[i] = new VariableRateMonoReader();
+			
+			//figure out where to queue data
+			//ampEnvs[i].dataQueue.
+			ampEnvs[i].output.connect( sineOscs[i].amplitude );
+			sineOscs[i].output.connect(dividerUnit.input);
+			
+			if (i > 0){
+				add( harmUnits[i] = new FunctionEvaluator() );
+				harmUnits[i].function.set( harms[i] );
+				freqPassThru.output.connect( harmUnits[i].input );
+				harmUnits[i].output.connect( sineOscs[i].frequency );
+
+			} else
+				freqPassThru.output.connect( sineOscs[0].frequency );
+
 		}
+		
 	}
 
 
