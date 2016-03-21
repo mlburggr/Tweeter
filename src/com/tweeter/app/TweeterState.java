@@ -43,7 +43,9 @@ public class TweeterState extends BasicGameState {
 	private int gameMode = 1; 
 	
 	private int timePassed;
+	private int time;
 	private ArrayList<BirdComputer> testBirds;
+	private BirdState birdState;
 	
 	public static final int ID = 2;
 
@@ -52,7 +54,9 @@ public class TweeterState extends BasicGameState {
 		this.width = 500;
 		this.height = 500;
 		timePassed = 0;
+		time = timePassed;
 		testBirds = new ArrayList<BirdComputer>();
+		birdState = BirdState.NORMAL;
 		font = new AngelCodeFont("fonts/demo2.fnt","fonts/demo2_00.tga");
 		notesToAdd = new ArrayList<Character>();
 	}
@@ -83,7 +87,7 @@ public class TweeterState extends BasicGameState {
 //		map.addBird(b2);
 		
 		Random random = new Random();
-		for (int i = 0; i<3; i++) {
+		for (int i = 0; i<5; i++) {
 			BirdComputer b = new BirdComputer(random.nextInt(mapSizeX), random.nextInt(mapSizeY));
 			testBirds.add(b);
 			map.addBird(b);
@@ -106,7 +110,8 @@ public class TweeterState extends BasicGameState {
 				if(c.hasBird() && c.getBird().isUserBird()){
 					graphics.setColor(Color.gray);
 				} else if(c.hasBird()){
-					graphics.setColor(Color.cyan);
+					if (birdState == BirdState.MATE) { graphics.setColor(Color.pink); }
+					else { graphics.setColor(Color.cyan); }
 				} else {
 					graphics.setColor(Color.white);
 				}
@@ -155,14 +160,30 @@ public class TweeterState extends BasicGameState {
 			
 			assert width==height : "Window Width does not match Height";*/
 		
-		timePassed += delta;
-		if (timePassed > 1250) {
-			timePassed = 0;
-			for (BirdComputer b : testBirds) {
-				b.randomMove(map);
+		if (birdState == BirdState.NORMAL) {
+			timePassed += delta;
+			if (timePassed > 1250) {
+				timePassed = 0;
+				for (BirdComputer b : testBirds) {
+					b.randomMove(map);
+				}
 			}
 		}
 		
+		else if (birdState == BirdState.MATE) {
+			for (BirdComputer b : testBirds) { b.setMovingTowards(userBird); }
+			
+			timePassed += delta;
+			if (timePassed > 6000) {
+				timePassed = 0;
+				time = timePassed;
+				birdState = BirdState.NORMAL; 
+			} 
+			else if (timePassed - time > 375) {
+				time = timePassed;
+				for (BirdComputer b : testBirds) { b.moveTowards(map); }
+			} 
+		}
 	}
 	
 	public void keyReleased(int key, char c){
@@ -241,7 +262,11 @@ public class TweeterState extends BasicGameState {
 		if(key == Input.KEY_TAB){
 				gameMode = 2;
 		}
-		userBird.setEnergy(userBird.getEnergy() - 5);
+		if(key == Input.KEY_X) {
+			birdState = BirdState.MATE;
+			System.out.println("Birds want to mate!");
+		}
+		// userBird.setEnergy(userBird.getEnergy() - 5); TODO uncomment later
 		}
 		
 		}
