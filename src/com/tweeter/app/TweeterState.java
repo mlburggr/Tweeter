@@ -22,6 +22,7 @@ public class TweeterState extends BasicGameState {
 	public int mapSizeX = 1;
 	public int mapSizeY = 1;
 	private int points = 0;
+	private int birdEnergyLimit = 0;
 	private String noteToDraw = "";
 	private ArrayList<Character> notesToAdd;
 	private int npcBirdCount = 0;
@@ -67,6 +68,7 @@ public class TweeterState extends BasicGameState {
 		this.mapSizeX = Integer.parseInt(NewGameSettingsState.sizeText);
 		this.mapSizeY = Integer.parseInt(NewGameSettingsState.sizeText);
 		this.npcBirdCount = Integer.parseInt(NewGameSettingsState.npcText);
+		this.birdEnergyLimit = Integer.parseInt(NewGameSettingsState.birdEnergyText);
 		map = new Map(mapSizeX,mapSizeY);
 		
 		
@@ -78,7 +80,7 @@ public class TweeterState extends BasicGameState {
 			}
 		}
 		
-		this.userBird = new BirdPlayer(0,1,true);
+		this.userBird = new BirdPlayer(0,1,true,birdEnergyLimit);
 		map.addBird(userBird);
 		
 		map.setNeighbors();

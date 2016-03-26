@@ -18,6 +18,13 @@ public class BirdPlayer extends Bird{
 		this.energy = 100;
 	}
 	
+	public BirdPlayer(int origX, int origY, boolean userBird, int energyLimit){
+		super(origX, origY);
+		if(userBird) { this.mode = 2; }
+		this.health = 100;
+		this.energy = energyLimit;
+	}
+	
 	@Override
 	public int getHealth(){
 		return health;

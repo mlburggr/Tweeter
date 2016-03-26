@@ -16,12 +16,14 @@ public class NewGameSettingsState extends BasicGameState {
 	
 	private TextField sizeField;
 	private TextField npcField;
+	private TextField birdEnergyField;
 	private AngelCodeFont font;
 	private Image playButtonImage;
 	private MouseOverArea playButtonArea;
 	private StateBasedGame game;
 	public static String sizeText;
 	public static String npcText;
+	public static String birdEnergyText;
 
 	@Override
 	public void init(GameContainer container, StateBasedGame game) throws SlickException {
@@ -29,6 +31,7 @@ public class NewGameSettingsState extends BasicGameState {
 		font = new AngelCodeFont("fonts/demo2.fnt","fonts/demo2_00.tga");
 		sizeField = new TextField(container,font,100,100,50,50);
 		npcField = new TextField(container,font,100,200,50,50);
+		birdEnergyField = new TextField(container,font,100,300,50,50);
 		playButtonImage = new Image("res/start.jpg");
 		playButtonArea = new MouseOverArea(container, playButtonImage, 200, 200);
 		
@@ -43,6 +46,7 @@ public class NewGameSettingsState extends BasicGameState {
 		}
 		sizeField.render(container, graphics);
 		npcField.render(container, graphics);
+		birdEnergyField.render(container, graphics);
 		playButtonImage.draw(200,200);
 	}
 
@@ -57,7 +61,10 @@ public class NewGameSettingsState extends BasicGameState {
 		super.mouseClicked(button, x, y, clickCount);
 		this.npcText = npcField.getText();
 		this.sizeText = sizeField.getText();
-		if(sizeText.equals("") || npcText.equals("")){
+		this.birdEnergyText = birdEnergyField.getText();
+		
+		if(sizeText.equals("") || npcText.equals("")
+				|| birdEnergyText.equals("")){
 			System.out.println("Enter a value!");
 			return;
 		}
