@@ -24,6 +24,7 @@ public class TweeterState extends BasicGameState {
 	private int points = 0;
 	private String noteToDraw = "";
 	private ArrayList<Character> notesToAdd;
+	private int npcBirdCount = 0;
 	
 	/*
 	 * Game Modes
@@ -65,6 +66,7 @@ public class TweeterState extends BasicGameState {
 		
 		this.mapSizeX = Integer.parseInt(NewGameSettingsState.sizeText);
 		this.mapSizeY = Integer.parseInt(NewGameSettingsState.sizeText);
+		this.npcBirdCount = Integer.parseInt(NewGameSettingsState.npcText);
 		map = new Map(mapSizeX,mapSizeY);
 		
 		
@@ -87,7 +89,7 @@ public class TweeterState extends BasicGameState {
 //		map.addBird(b2);
 		
 		Random random = new Random();
-		for (int i = 0; i<5; i++) {
+		for (int i = 0; i<npcBirdCount; i++) {
 			BirdComputer b = new BirdComputer(random.nextInt(mapSizeX), random.nextInt(mapSizeY));
 			testBirds.add(b);
 			map.addBird(b);

@@ -15,17 +15,20 @@ public class NewGameSettingsState extends BasicGameState {
 	public static final int ID = 1;
 	
 	private TextField sizeField;
+	private TextField npcField;
 	private AngelCodeFont font;
 	private Image playButtonImage;
 	private MouseOverArea playButtonArea;
 	private StateBasedGame game;
 	public static String sizeText;
+	public static String npcText;
 
 	@Override
 	public void init(GameContainer container, StateBasedGame game) throws SlickException {
 		this.game = game;
 		font = new AngelCodeFont("fonts/demo2.fnt","fonts/demo2_00.tga");
 		sizeField = new TextField(container,font,100,100,50,50);
+		npcField = new TextField(container,font,100,200,50,50);
 		playButtonImage = new Image("res/start.jpg");
 		playButtonArea = new MouseOverArea(container, playButtonImage, 200, 200);
 		
@@ -39,6 +42,7 @@ public class NewGameSettingsState extends BasicGameState {
 			return;
 		}
 		sizeField.render(container, graphics);
+		npcField.render(container, graphics);
 		playButtonImage.draw(200,200);
 	}
 
@@ -51,18 +55,20 @@ public class NewGameSettingsState extends BasicGameState {
 	@Override
 	public void mouseClicked(int button, int x, int y, int clickCount){
 		super.mouseClicked(button, x, y, clickCount);
+		this.npcText = npcField.getText();
 		this.sizeText = sizeField.getText();
-		if(sizeText.equals("")){
+		if(sizeText.equals("") || npcText.equals("")){
 			System.out.println("Enter a value!");
 			return;
 		}
 		int sizeInt = Integer.parseInt(sizeText);
 		if(sizeInt < 5){
-			System.out.println("Must be larger than 4");
+			System.out.println("Board size must be larger than 4");
 			return;
 		}
 		
 		//This is really fucking lame, There's no abstraction for this?
+		//no dude, slick2d is hardcore
 		if (x >= playButtonArea.getX() && 
 			x <= playButtonArea.getX() + playButtonArea.getWidth() && 
 			y >= playButtonArea.getY() && 
