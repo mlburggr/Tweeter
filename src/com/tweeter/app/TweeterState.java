@@ -26,7 +26,10 @@ public class TweeterState extends BasicGameState {
 	private String noteToDraw = "";
 	private ArrayList<Character> notesToAdd;
 	private int npcBirdCount = 0;
+	
+	//Added by Nick
 	public TweetPlayer tweetPlyr;
+	public TweetTree tweetTree;
 	
 	/*
 	 * Game Modes
