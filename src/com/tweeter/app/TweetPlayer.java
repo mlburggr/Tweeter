@@ -2,7 +2,12 @@ package com.tweeter.app;
 
 import com.jsyn.JSyn;
 import com.jsyn.Synthesizer;
+import com.jsyn.data.SegmentedEnvelope;
+import com.jsyn.unitgen.FilterStateVariable;
 import com.jsyn.unitgen.LineOut;
+import com.jsyn.unitgen.SineOscillator;
+import com.jsyn.unitgen.VariableRateMonoReader;
+import com.jsyn.unitgen.WhiteNoise;
 import com.tweeter.app.Note;
 import com.tweeter.app.Tweet;
 import com.tweeter.app.TweetSynth;
@@ -17,35 +22,57 @@ public class TweetPlayer {
 	/**
 	 * Base frequency (A2)
 	 */
-	public static final double BASE = 110.0;
+	public static final double BASE = 220.0;
 	
 	
 	private LineOut lineOut;
 	private Synthesizer synth;
 	private TweetSynth tweetSynth;
+	private SegmentedEnvelope tweetFreqEnvDat;
+	private VariableRateMonoReader tweetFreqEnv;
 	
 	public TweetPlayer() {
 		synth = JSyn.createSynthesizer();
 		synth.start();
 		synth.add( lineOut = new LineOut() );
-		tweetSynth = new TweetSynth();
-		//tweetSynth.
+		//synth.add( tweetSynth = new TweetSynth() );
+		
+		
+		
+		//
+
 	}
 	
 	
 	public void playTweet(Tweet t){
 		Note [] tweet = t.toArray( new Note [0]);
+		synth.add( tweetSynth = new TweetSynth() );
 		
-		double [] tweetFreqEnvelope = new double[2 * tweet.length]; 
+		double [] tweetFreqDat = new double[4 * tweet.length]; 
 		
+		// Translate tweet
 		for (int i =0 ,j = 0; i < tweet.length * 4; i += 4, j++){
-			tweetFreqEnvelope[i] = BASE + (tweet[j].ordinal() * SEMITONE);
-			tweetFreqEnvelope[i+1] = 0.0 ;
-			tweetFreqEnvelope[i+2] = BASE + (tweet[j].ordinal() * SEMITONE);
-			tweetFreqEnvelope[i+1] = Note.DURATION; }
+			tweetFreqDat[i] = BASE * (Math.pow(SEMITONE, tweet[j].semi));
+			tweetFreqDat[i+1] = 0.0 ;
+			tweetFreqDat[i+2] = tweetFreqDat[i];
+			tweetFreqDat[i+3] = Note.DURATION; 
+			System.out.printf("%fhz for %fsecs\n", tweetFreqDat[i], tweetFreqDat[i+3]);}
 		
 		
-//		Initialize the synth
+		synth.add( tweetFreqEnv = new VariableRateMonoReader() );
+		tweetFreqEnv.output.connect(tweetSynth.frequency);
 		
+		//load tweet data to envelope
+		tweetFreqEnvDat = new SegmentedEnvelope(tweetFreqDat);
+		
+		//Start playing tweet
+		tweetFreqEnv.dataQueue.queue(tweetFreqEnvDat, 0, tweetFreqEnvDat.getNumFrames());
+		
+		tweetSynth.output.connect(0, lineOut.input, 0);
+		tweetSynth.output.connect(0, lineOut.input, 1);
+		
+		lineOut.start();
+		
+		System.out.println("Reached!");
 	}
 }

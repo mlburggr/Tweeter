@@ -26,6 +26,7 @@ public class TweeterState extends BasicGameState {
 	private String noteToDraw = "";
 	private ArrayList<Character> notesToAdd;
 	private int npcBirdCount = 0;
+	public TweetPlayer tweetPlyr;
 	
 	/*
 	 * Game Modes
@@ -61,6 +62,7 @@ public class TweeterState extends BasicGameState {
 		birdState = BirdState.NORMAL;
 		font = new AngelCodeFont("fonts/demo2.fnt","fonts/demo2_00.tga");
 		notesToAdd = new ArrayList<Character>();
+		tweetPlyr = new TweetPlayer();
 	}
 	
 	private void createMap(){
