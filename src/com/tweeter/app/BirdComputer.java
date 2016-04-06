@@ -4,14 +4,23 @@ import java.util.Random;
 
 public class BirdComputer extends Bird{
 
-	private int health;
-	private int energy;
+//	private int health;
+//	private int energy;
+	private char[] notes = {'a','s','d','q','w','e'};
+	Random random = new Random();
 
 	public BirdComputer(int origX, int origY){
 		super(origX, origY);
 		this.health = 100;
 		this.energy = 100;
-				
+		
+		char[] tweetNotes = new char[5];
+		for(int i=0, x = random.nextInt(6);i<=4;i++) {
+			tweetNotes[i] = notes[x];
+		}
+		
+		Tweet tweet = new Tweet(tweetNotes);
+		this.setTweet(tweet);
 	}
 
 	@Override
@@ -48,7 +57,7 @@ public class BirdComputer extends Bird{
 	
 	// Prototype implementation of NPC birds normal movements
 	public void randomMove(Map map) {
-		Random random = new Random();
+		//Random random = new Random();
 		int n = random.nextInt(4);
 		if (n==0) { map.moveUp(this, this.getPosX(), this.getPosY()); }
 		else if (n==1) { map.moveDown(this, this.getPosX(), this.getPosY()); }
