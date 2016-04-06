@@ -9,10 +9,10 @@ package com.tweeter.app;
 public enum Note {
 	A('a', 0), S('s', 7), D('d', 14), Q('q', 16), W('w', 21), E('e', 24);
 	private final char name;
-	private final int semi;
+	public final int semi;
 	
-	public static final int SUM = A.ordinal() + S.ordinal() + D.ordinal() + Q.ordinal() + W.ordinal() + E.ordinal();
-	public static final double DURATION = 0.42;
+	public static final int SUM = A.semi + S.semi + D.semi + Q.semi + W.semi + E.semi;
+	public static final double DURATION = 10.0;
 	
 	
 	Note(char c, int i){

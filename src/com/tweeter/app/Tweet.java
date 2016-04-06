@@ -32,7 +32,7 @@ public class Tweet extends LinkedList<Note>{
 	 */
 	public Tweet(char cs[]){
 		super();
-		for(int i = 1; i < cs.length; i++){
+		for(int i = 0; i < cs.length; i++){
 			add(Note.getNote(cs[i]));
 		}
 	}
@@ -98,9 +98,10 @@ public class Tweet extends LinkedList<Note>{
 	 * @param args
 	 */
 	public static void main(String[] args){
-		char [] tweetstring = {'a','e','q','d','s','w'};
+		TweetPlayer tweetPlyr = new TweetPlayer();
+		char [] tweetstring = {'a','s','d','q','w','e'};
 		Tweet testtweet = new Tweet(tweetstring);
 		
-		//TweetSynth.
+		tweetPlyr.playTweet(testtweet);
 	}
 }
