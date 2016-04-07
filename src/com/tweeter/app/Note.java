@@ -40,6 +40,25 @@ public enum Note {
 			throw new IllegalArgumentException(String.format("argument %c is not  note" ,c));}
 	}
 	
+	public static Note getNote(int n){
+		switch(n){
+		case 0:
+			return A;
+		case 1:
+			return S;
+		case 2:
+			return D;
+		case 3:
+			return Q;
+		case 4:
+			return W;
+		case 5:
+			return E;
+		default:
+			throw new IllegalArgumentException(String.format("argument %c is not  note" ,n));}
+	}
+	
+	
 	public static int getInterval(Note n1, Note n2){
 		int diff = n1.compareTo(n2);
 		if ( diff < 0)

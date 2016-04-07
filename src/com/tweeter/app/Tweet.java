@@ -12,6 +12,15 @@ import java.lang.Math.*;
 public class Tweet extends LinkedList<Note>{
 	
 	/**
+	 * number of set (immutable) notes in the tweet.
+	 */
+	private int setNotes;
+	
+	public Tweet(){
+		super();
+	}
+	
+	/**
 	 * @author nick
 	 * 
 	 * Tweet: initial note constructor
@@ -92,6 +101,12 @@ public class Tweet extends LinkedList<Note>{
 
 		return Math.log(v1[tsize]/(Note.SUM * hsize));
 	}
+	
+	/**
+	 * TODO this man, this...
+	 * @param tweet
+	 */
+	public void learn(Tweet tweet){}
 	
 	/**
 	 * Testing for the tweet and tweet synth classes
