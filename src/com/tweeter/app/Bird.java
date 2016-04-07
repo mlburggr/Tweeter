@@ -2,13 +2,13 @@ package com.tweeter.app;
 
 public abstract class Bird {
 
-	private int health;
-	private int energy;
-	private int id;
-	private Tweet tweet;
+	protected int health;
+	protected int energy;
+	protected int id;
+	protected Tweet tweet;
 	protected int mode; 	// private to protected for abstraction
-	private int posX;
-	private int posY;
+	protected int posX;
+	protected int posY;
 	protected Bird movingTowards;	// private to protected for abstraction
 
 	public Bird(int origX, int origY){

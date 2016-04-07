@@ -3,12 +3,23 @@ package com.tweeter.app;
 import java.util.Random;
 
 public class BirdComputer extends Bird{
-
-	private int health;
-	private int energy;
+	/**
+	 * Maximum length of a computer bird's random tweet.
+	 */
+	private static int TWEET_MAXLENGTH;
+	
 
 	public BirdComputer(int origX, int origY){
 		super(origX, origY);
+		Random random = new Random(42);
+		
+		//Add random length tweet
+		int length = random.nextInt() % TWEET_MAXLENGTH;
+		this.tweet = new Tweet();
+		for (int i =0; i < length; i ++)
+			tweet.add(Note.getNote( random.nextInt() % 6 ) );
+		//
+		
 		this.health = 100;
 		this.energy = 100;
 				
