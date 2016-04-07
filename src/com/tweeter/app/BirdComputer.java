@@ -3,12 +3,12 @@ package com.tweeter.app;
 import java.util.Random;
 
 public class BirdComputer extends Bird{
+	
 	/**
 	 * Maximum length of a computer bird's random tweet.
 	 */
 	private static int TWEET_MAXLENGTH;
 	
-
 	public BirdComputer(int origX, int origY){
 		super(origX, origY);
 		Random random = new Random(42);
@@ -22,7 +22,6 @@ public class BirdComputer extends Bird{
 		
 		this.health = 100;
 		this.energy = 100;
-				
 	}
 
 	@Override
@@ -86,5 +85,4 @@ public class BirdComputer extends Bird{
 			}
 		}
 	}
-	
 }

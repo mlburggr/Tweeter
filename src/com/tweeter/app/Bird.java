@@ -1,7 +1,7 @@
 package com.tweeter.app;
 
 public abstract class Bird {
-
+	
 	protected int health;
 	protected int energy;
 	protected int id;
@@ -10,15 +10,22 @@ public abstract class Bird {
 	protected int posX;
 	protected int posY;
 	protected Bird movingTowards;	// private to protected for abstraction
+	private BirdState state;
+	private int stateTime;
 
 	public Bird(int origX, int origY){
 		this.posX = origX;
 		this.posY = origY;
+		this.setBirdState(BirdState.NORMAL);
+		this.setStateTime(0);
 	}
 	
 	public Bird(int origX, int origY, boolean userBird){
 		this.posX = origX;
 		this.posY = origY;
+		this.posY = origY;
+		this.setBirdState(BirdState.NORMAL);
+		this.setStateTime(0);
 		if (userBird) { this.mode = 2; }
 	}
 	
@@ -85,5 +92,21 @@ public abstract class Bird {
 	abstract void setMovingTowards(Bird b);
 	
 	abstract boolean isUserBird();
+
+	public BirdState getBirdState() {
+		return state;
+	}
+
+	public void setBirdState(BirdState state) {
+		this.state = state;
+	}
+
+	public int getStateTime() {
+		return stateTime;
+	}
+
+	public void setStateTime(int stateTime) {
+		this.stateTime = stateTime;
+	}
 	
 }
