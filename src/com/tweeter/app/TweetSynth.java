@@ -25,7 +25,7 @@ public class TweetSynth extends Circuit{
 	private static Function divider = 
 			new Function() { 
 		public double evaluate( double x ){
-			return  x/NUMUNITS; 
+			return  (x/NUMUNITS) - .1; 
 		} 
 	};
 
@@ -34,6 +34,7 @@ public class TweetSynth extends Circuit{
 	public UnitInputPort frequency;
 	public UnitInputPort amplitude;
 	public UnitOutputPort output;
+	
 	private PassThrough freqPassThru;
 	private PassThrough sigPassThru;
 
@@ -46,21 +47,25 @@ public class TweetSynth extends Circuit{
 	// Amplitude Envelope Players
 	private VariableRateMonoReader[] ampEnvs = new VariableRateMonoReader[NUMUNITS];
 
-	// Data for amp Envelopes				 // First Envelope
+	// Data for amp Envelopes	// First Envelope
 	private  double[][] ampDats = {{ 0.02, 1,
-		0.2,  0.5,
-		0.1,  0.6,
-		0.1,  0},
-		// Second Envelope
-		{ 0.32, 1,
-			0.1,  0},
-			// Third Envelope
-			{ 0.4,  1,
-				0.02, 0}};
+									 0.2,  0.5,
+									 0.1,  0.6,
+									 0.1,  0},
+								// Second Envelope
+								   { 0.32, 1,
+								     0.1,  0},
+								// Third Envelope
+								   { 0.4,  1,
+								     0.02, 0}};
+	
 	private SegmentedEnvelope [] ampEnvDats = new SegmentedEnvelope[NUMUNITS];	
 
-
+	/**
+	 * Create the circuit
+	 */
 	public TweetSynth() {
+		super();
 		add( sineOscs[0] = new SineOscillator(110, 1));
 		addPort( frequency = sineOscs[0].frequency );
 		addPort( output = sineOscs[0].output );
@@ -86,12 +91,12 @@ public class TweetSynth extends Circuit{
 		//	Initialize the *real* unit generators
 		for (int i = 0; i < NUMUNITS; i++) {
 			add( sineOscs[i]  = new SineOscillator(440, 1));
-			//ampEnvs[i] = new VariableRateMonoReader();
+			add( ampEnvs[i] = new VariableRateMonoReader() );
 
 			//figure out where to queue data
-			//ampEnvDats[i] = new SegmentedEnvelope(ampDats[i]);
-			//ampEnvs[i].dataQueue.queue(ampEnvDats[i]);
-			//ampEnvs[i].output.connect( sineOscs[i].amplitude );
+			ampEnvDats[i] = new SegmentedEnvelope(ampDats[i]);
+			ampEnvs[i].dataQueue.queueLoop(ampEnvDats[i]);
+			ampEnvs[i].output.connect( sineOscs[i].amplitude );
 			sineOscs[i].output.connect(sigPassThru.input);
 
 			if (i > 0){
@@ -102,7 +107,18 @@ public class TweetSynth extends Circuit{
 			} else
 				freqPassThru.output.connect( sineOscs[0].frequency );}
 	}
+	
+	/**
+	 * Debug Synth
+	 * @param simple
+	 */
 	TweetSynth(boolean simple){
+		super();
+		SineOscillator osc;
+		add( osc = new SineOscillator(440, 0) );
+		addPort( frequency = osc.frequency );
+		addPort( output = osc.output );
+		addPort( amplitude = osc.amplitude ); 
 	}
 
 }

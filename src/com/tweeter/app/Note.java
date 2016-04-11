@@ -12,7 +12,7 @@ public enum Note {
 	public final int semi;
 	
 	public static final int SUM = A.semi + S.semi + D.semi + Q.semi + W.semi + E.semi;
-	public static final double DURATION = 10.0;
+	public static final double DURATION = 0.42;
 	
 	
 	Note(char c, int i){

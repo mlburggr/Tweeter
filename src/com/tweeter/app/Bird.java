@@ -20,13 +20,8 @@ public abstract class Bird {
 		this.setStateTime(0);
 	}
 	
-	public Bird(int origX, int origY, boolean userBird){
-		this.posX = origX;
-		this.posY = origY;
-		this.posY = origY;
-		this.setBirdState(BirdState.NORMAL);
-		this.setStateTime(0);
-		if (userBird) { this.mode = 2; }
+	public void tweet(){
+		
 	}
 	
 	public int getHealth(){
