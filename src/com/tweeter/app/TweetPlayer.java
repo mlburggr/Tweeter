@@ -55,7 +55,7 @@ public class TweetPlayer {
 			tweetFreqDat[i+1] = BASE * (Math.pow(SEMITONE, tweet[j].semi));
 			tweetFreqDat[i+2] = Note.DURATION; 
 			tweetFreqDat[i+3] = tweetFreqDat[i+1];
-			System.out.printf("%fhz for %fsecs\n", tweetFreqDat[i], tweetFreqDat[i+3]);}
+			System.out.printf("%fhz for %fsecs\n", tweetFreqDat[i+1], tweetFreqDat[i+2]);}
 		// end it son
 		tweetFreqDat[tweetFreqDat.length - 2] = 0;
 		tweetFreqDat[tweetFreqDat.length - 1] = 0;
