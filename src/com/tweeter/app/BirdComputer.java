@@ -7,7 +7,7 @@ public class BirdComputer extends Bird{
 	/**
 	 * Maximum length of a computer bird's random tweet.
 	 */
-	private static int TWEET_MAXLENGTH;
+	private static int TWEET_MAXLENGTH = 12;
 	
 	public BirdComputer(int origX, int origY){
 		super(origX, origY);
