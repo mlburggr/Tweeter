@@ -110,7 +110,6 @@ public class TweeterState extends BasicGameState {
 		}
 		
 		
-		
 		for(int j = 0; j < mapSizeX; j++){
 			for(int k = 0; k < mapSizeY; k++){
 				Cell c = map.getCellAt(j, k);
@@ -152,6 +151,8 @@ public class TweeterState extends BasicGameState {
 				font.drawString(150, 150, noteToDraw);
 			}
 		}
+		graphics.setColor(Color.black);
+		graphics.fillRect(0, 0, 100, 50);
 		
 	}
 
