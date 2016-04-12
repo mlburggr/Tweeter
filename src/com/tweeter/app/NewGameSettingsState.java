@@ -1,6 +1,7 @@
 package com.tweeter.app;
 
 import org.newdawn.slick.AngelCodeFont;
+import org.newdawn.slick.Color;
 import org.newdawn.slick.GameContainer;
 import org.newdawn.slick.Graphics;
 import org.newdawn.slick.Image;
@@ -29,11 +30,12 @@ public class NewGameSettingsState extends BasicGameState {
 	public void init(GameContainer container, StateBasedGame game) throws SlickException {
 		this.game = game;
 		font = new AngelCodeFont("fonts/demo2.fnt","fonts/demo2_00.tga");
-		sizeField = new TextField(container,font,100,100,50,50);
-		npcField = new TextField(container,font,100,200,50,50);
-		birdEnergyField = new TextField(container,font,100,300,50,50);
+		sizeField = new TextField(container,font,100,100,50,40);
+		npcField = new TextField(container,font,100,200,50,40);
+		birdEnergyField = new TextField(container,font,100,300,50,40);
 		playButtonImage = new Image("res/start.jpg");
 		playButtonArea = new MouseOverArea(container, playButtonImage, 200, 200);
+		
 		
 		
 	}
@@ -44,6 +46,9 @@ public class NewGameSettingsState extends BasicGameState {
 			this.init(container,game);
 			return;
 		}
+		font.drawString(5, 50, "Size of Field (n x n):", Color.white);
+		font.drawString(5, 150, "Inital NPCs:", Color.white);
+		font.drawString(5, 250, "Max Energy:", Color.white);
 		sizeField.render(container, graphics);
 		npcField.render(container, graphics);
 		birdEnergyField.render(container, graphics);
