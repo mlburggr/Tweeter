@@ -16,7 +16,7 @@ public abstract class Bird {
 	public Bird(int origX, int origY){
 		this.posX = origX;
 		this.posY = origY;
-		this.setBirdState(BirdState.NORMAL);
+		this.setBirdState(BirdState.DEFAULT);
 		this.setStateTime(0);
 	}
 	
@@ -24,7 +24,7 @@ public abstract class Bird {
 		this.posX = origX;
 		this.posY = origY;
 		this.posY = origY;
-		this.setBirdState(BirdState.NORMAL);
+		this.setBirdState(BirdState.DEFAULT);
 		this.setStateTime(0);
 		if (userBird) { this.mode = 2; }
 	}
