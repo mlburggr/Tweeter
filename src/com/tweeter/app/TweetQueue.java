@@ -97,7 +97,7 @@ public class TweetQueue {
 	 * 
 	 * @param x : the x coordinate of listening bird
 	 * @param y : the y coordinate of listening bird
-	 * @return closest tweet to the listening bird
+	 * @return closest tweet to the listening bird, null if empty
 	 */
 	public TweetNode listen(int x, int y){
 		TweetNode closest = null;
@@ -107,16 +107,21 @@ public class TweetQueue {
 			if (--priorities[index] == 0){
 				priorities[index] = priorities[--elems];
 				tweets[index] = tweets[elems];}
-				
-			double newDistance = tweets[index].distance(x, y);
-			if (newDistance > 1){
-				if (newDistance < distance){
-					closest = tweets[index];
-					distance = newDistance;
-				}
+			else {	
+			        double newDistance = tweets[index].distance(x, y);
+			        if (newDistance > 1){
+				        if (newDistance < distance){
+				        	closest = tweets[index];
+				        	distance = newDistance;
+				        }
+			        }
+			        index = (index + 1) % elems;
+				index = (index + 1) % elems;
 			}
-			index = (index + 1) % elems;
 		}
+		
+		if (elems == 0)
+			System.out.println("TweetQueue empty");
 		
 		return closest;
 	}

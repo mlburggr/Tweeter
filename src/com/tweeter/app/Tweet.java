@@ -114,9 +114,13 @@ public class Tweet extends LinkedList<Note>{
 	 */
 	public static void main(String[] args){
 		TweetPlayer tweetPlyr = new TweetPlayer();
-		char [] tweetstring = {'a','s','d','q','w','e'};
-		Tweet testtweet = new Tweet(tweetstring);
+		char [] tweetstring1 = {'a','s','d','q','w','e'};
+		Tweet testtweet1 = new Tweet(tweetstring1);
+		char [] tweetstring2 = {'s','d','q','w','e','a'};
+		Tweet testtweet2 = new Tweet(tweetstring2);
 		
-		tweetPlyr.playTweet(testtweet);
+		tweetPlyr.playTweet(testtweet1);
+		tweetPlyr.playTweet(testtweet2);
+
 	}
 }

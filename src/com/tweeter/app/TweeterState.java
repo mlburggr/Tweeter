@@ -29,7 +29,7 @@ public class TweeterState extends BasicGameState {
 	
 	//Added by Nick
 	public TweetPlayer tweetPlyr;
-	public TweetQueue tweetTree;
+	public TweetQueue tweetQueue;
 	
 	/*
 	 * Game Modes
