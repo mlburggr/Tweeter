@@ -63,6 +63,7 @@ public class TweeterState extends BasicGameState {
 		// birdState = BirdState.NORMAL;
 		font = new AngelCodeFont("fonts/demo2.fnt","fonts/demo2_00.tga");
 		notesToAdd = new ArrayList<Character>();
+		tweetTree = new TweetQueue(10);
 		tweetPlyr = new TweetPlayer();
 	}
 	
@@ -98,6 +99,7 @@ public class TweeterState extends BasicGameState {
 			BirdComputer b = new BirdComputer(random.nextInt(mapSizeX), random.nextInt(mapSizeY));
 			testBirds.add(b);
 			map.addBird(b);
+			tweetTree.addTweet(b.tweet, b.getPosX(), b.getPosY(), b);
 		}
 	
 	}
@@ -116,9 +118,12 @@ public class TweeterState extends BasicGameState {
 				Cell c = map.getCellAt(j, k);
 				if(c.hasBird() && c.getBird().isUserBird()){
 					graphics.setColor(Color.gray);
+//					if (c.getBird().getBirdState() == BirdState.NORMAL) { graphics.setColor(Color.gray); }
+//					else if (c.getBird().getBirdState() == BirdState.TWEET) { graphics.setColor(Color.yellow); }
 				} else if(c.hasBird()){
 					if (c.getBird().getBirdState() == BirdState.MATE) { graphics.setColor(Color.pink); }
 					else if (c.getBird().getBirdState() == BirdState.ATTACK) { graphics.setColor(Color.red); }
+					else if (c.getBird().getBirdState() == BirdState.TWEET) { graphics.setColor(Color.yellow); }
 					else { graphics.setColor(Color.cyan); }
 				} else {
 					graphics.setColor(Color.white);
@@ -167,56 +172,103 @@ public class TweeterState extends BasicGameState {
 			
 			
 			assert width==height : "Window Width does not match Height";*/
-		
+		outerloop:
 		for (BirdComputer b : testBirds) {
-			if (b.getBirdState() == BirdState.NORMAL) {
+			if (b.getBirdState() == BirdState.DEFAULT) {
+				b.setMovingTowards(null);
 				b.setStateTime(b.getStateTime()+delta);
-				if (b.getStateTime() > 1250) {
+				timePassed += delta;
+								
+				if (b.getStateTime() > 5000) {
 					b.setStateTime(0);
+					b.setBirdState(BirdState.LISTEN);
+				} else if (timePassed > 1250){
+					timePassed = 0;
 					b.randomMove(map);
 				}
-			}
+			} //end of MOVING state 
+			
+			else if (b.getBirdState() == BirdState.LISTEN) {
+				b.setStateTime(b.getStateTime()+delta);
+				
+				if (b.getStateTime() > 1250) {
+					b.setStateTime(0);
+					
+					if (b.getMovingTowards() == null) {
+						b.randomMove(map);
+						TweetNode node = tweetTree.listen(b.getPosX(), b.getPosY());
+						if (node!=null) {
+							if (node.bird.getBirdState() == BirdState.LISTEN
+									&& Tweet.compare(node.tweet, b.tweet) >= 0) {
+								if (node.bird.movingTowards == null) {
+									b.setMovingTowards(node.bird);
+									node.bird.setMovingTowards(b);
+								}
+							}
+						}
+						else {
+							b.randomMove(map);
+						}
+					}
+					else {
+						Bird target = b.getMovingTowards();
+						if (!target.equals(b)) {
+							double distance = Math.hypot(b.getPosX()-target.getPosX(), b.getPosY()-target.getPosY());
+							if (distance <= Math.sqrt(2)) {
+								int x, y;
+								if (b.getPosX() - 1 > 0) x = b.getPosX() - 1; else x = 0;
+								if (b.getPosY() - 1 > 0) y = b.getPosY() - 1; else y = 0;
+								for (; x <= b.getPosX()+1; x++) {
+									for (; y <= b.getPosY()+1; y++) {
+										Cell c = map.getCellAt(x, y);
+										if (!c.hasBird()) {
+											BirdComputer spawn = new BirdComputer(x,y); 
+											tweetTree.addTweet(spawn.tweet, spawn.getPosX(), spawn.getPosY(), spawn);
+											spawn.setTweet(b.tweet);
+											spawn.setBirdState(BirdState.DEFAULT);
+											testBirds.add(spawn);
+											map.addBird(spawn);
+											target.setBirdState(BirdState.DEFAULT);
+											b.setBirdState(BirdState.DEFAULT);
+											break outerloop;
+										}
+									}
+								} // end of nested for loop that spawns bird
+							}
+							else {
+								b.moveTowards(map);
+							}
+						}
+						else {
+							b.randomMove(map);
+							b.setBirdState(BirdState.DEFAULT);
+						}
+					}
+				} // end of if (b.getStateTime() > 1250)
+			} // end of NORMAL state
 			
 			else if (b.getBirdState() == BirdState.MATE) {
+				//b.setMovingTowards(tweetTree.listen(b.getPosX(), b.getPosY()).bird);
+				
 				b.setMovingTowards(userBird);
 				b.setStateTime(b.getStateTime()+delta);
 				timePassed += delta;
 								
 				if (b.getStateTime() > 6000) {
 					b.setStateTime(0);
-					b.setBirdState(BirdState.NORMAL);
+					b.setBirdState(BirdState.LISTEN);
 				} else if (timePassed > 750){
 					timePassed = 0;
 					b.moveTowards(map);
 				}
-			}			
-		}
-		
-		/* *******original implementation, kept for reference
-		if (birdState == BirdState.NORMAL) {
-			timePassed += delta;
-			if (timePassed > 1250) {
-				timePassed = 0;
-				for (BirdComputer b : testBirds) {
-					b.randomMove(map);
-				}
-			}
-		}
-		
-		else if (birdState == BirdState.MATE) {
-			for (BirdComputer b : testBirds) { b.setMovingTowards(userBird); }
+			} // end of MATING state
 			
-			timePassed += delta;
-			if (timePassed > 6000) {
-				timePassed = 0;
-				time = timePassed;
-				birdState = BirdState.NORMAL; 
-			} 
-			else if (timePassed - time > 375) {
-				time = timePassed;
-				for (BirdComputer b : testBirds) { b.moveTowards(map); }
-			} 
-		} */
+			else if (b.getBirdState() == BirdState.TWEET) {
+				tweetTree.addTweet(b.getTweet(), b.getPosX(), b.getPosY(), b);
+				b.setBirdState(BirdState.LISTEN);
+			} // end of TWEET state
+			
+		} // end of for each bird loop
 		
 	}
 	
@@ -299,6 +351,19 @@ public class TweeterState extends BasicGameState {
 		if(key == Input.KEY_X) {
 			for (BirdComputer b : testBirds) { b.setBirdState(BirdState.MATE); }
 			System.out.println("*****NEW***** Birds want to mate!");
+		}
+		if(key == Input.KEY_T) {
+			userBird.setBirdState(BirdState.TWEET);
+			tweetTree.addTweet(userBird.getTweet(), userBird.getPosX(), userBird.getPosY(), userBird);
+			System.out.println("##### added to tweetQueue");
+			try {
+				Thread.sleep(1000);
+			} catch (InterruptedException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			
+			userBird.setBirdState(BirdState.LISTEN);
 		}
 		// userBird.setEnergy(userBird.getEnergy() - 5); TODO uncomment later
 		}
