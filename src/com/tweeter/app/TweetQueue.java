@@ -93,17 +93,17 @@ public class TweetQueue {
 			if (--priorities[index] == 0){
 				priorities[index] = priorities[--elems];
 				tweets[index] = tweets[elems];}
-				
-			double newDistance = tweets[index].distance(x, y);
-			if (newDistance > 1){
-				if (newDistance < distance){
-					closest = tweets[index];
-					distance = newDistance;
-				}
+			else {	
+			        double newDistance = tweets[index].distance(x, y);
+			        if (newDistance > 1){
+				        if (newDistance < distance){
+				        	closest = tweets[index];
+				        	distance = newDistance;
+				        }
+			        }
+			        index = (index + 1) % elems;
 			}
-			index = (index + 1) % elems;
 		}
-		
 		return closest;
 	}
 }
