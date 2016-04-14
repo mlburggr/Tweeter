@@ -7,7 +7,7 @@ public class BirdComputer extends Bird{
 	/**
 	 * Maximum length of a computer bird's random tweet.
 	 */
-	private static int TWEET_MAXLENGTH;
+	private static int TWEET_MAXLENGTH = 15;
 	
 	public BirdComputer(int origX, int origY){
 		super(origX, origY);
@@ -73,13 +73,13 @@ public class BirdComputer extends Bird{
 		int distX = Math.abs(this.getPosX() - x);
 		int distY = Math.abs(this.getPosY() - y);
 		if (distX >= distY) {
-			if (distX!=1) {
+			if (distX>1) {
 				if (x > this.getPosX()) { map.moveRight(this, this.getPosX(), this.getPosY()); }
 				else { map.moveLeft(this, this.getPosX(), this.getPosY()); }
 			}
 		}
 		else {
-			if (distY!=1) {
+			if (distY>1) {
 				if (y > this.getPosY()) { map.moveDown(this, this.getPosX(), this.getPosY()); }
 				else { map.moveUp(this, this.getPosX(), this.getPosY()); }
 			}
