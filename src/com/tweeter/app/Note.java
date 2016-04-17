@@ -11,6 +11,16 @@ public enum Note {
 	private final char name;
 	public final int semi;
 	
+	/**
+	 * Frequency step of one semitone in hz. (2 ^ 1/12)
+	 */
+	public static final double SEMITONE = 1.059463094;	
+	
+	/**
+	 * Base frequency (A3)
+	 */
+	public static final double BASE = 220.0;
+	
 	public static final int SUM = A.semi + S.semi + D.semi + Q.semi + W.semi + E.semi;
 	public static final double DURATION = 0.42;
 	
