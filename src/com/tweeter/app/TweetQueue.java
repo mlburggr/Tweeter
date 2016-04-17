@@ -1,5 +1,7 @@
 package com.tweeter.app;
 
+//import TweetNode;
+
 /**
  * Class to store all tweeted tweets on the gameboard.
  * Basically it just truncates the list if it's about 
@@ -63,14 +65,26 @@ public class TweetQueue {
 	 * @param x : x coordinate of bird
 	 * @param y : y coordinate of bird
 	 */
-	public void addTweet(Tweet tweet, int x, int y){
+	// Original implementation
+//	public void addTweet(Tweet tweet, int x, int y){
+//		if (elems == size){
+//			int beforeIndex = (index - 1) % elems;
+//			priorities[beforeIndex] = PRIORITY;
+//			tweets[beforeIndex] = new TweetNode(tweet, x, y);
+//		} else {
+//			priorities[++elems] = PRIORITY;
+//			tweets[elems] = new TweetNode(tweet, x, y);
+//		}
+//	}
+	
+	public void addTweet(Tweet tweet, int x, int y, Bird b){
 		if (elems == size){
 			int beforeIndex = (index - 1) % elems;
 			priorities[beforeIndex] = PRIORITY;
-			tweets[beforeIndex] = new TweetNode(tweet, x, y);
+			tweets[beforeIndex] = new TweetNode(tweet, x, y, b);
 		} else {
-			priorities[++elems] = PRIORITY;
-			tweets[elems] = new TweetNode(tweet, x, y);
+			priorities[elems] = PRIORITY;
+			tweets[elems++] = new TweetNode(tweet, x, y, b);
 		}
 	}
 	
@@ -122,6 +136,7 @@ class TweetNode {
 	public int x0;
 	public int y0;
 	public Tweet tweet;
+	public Bird bird; 		// want to try something out
 	
 	/**
 	 * Constructor,I mean, C'mon.  
@@ -130,10 +145,11 @@ class TweetNode {
 	 * @param x : x coordinate of tweet
 	 * @param y : y coordinate of tweet
 	 */
-	public TweetNode(Tweet t, int x, int y){
+	public TweetNode(Tweet t, int x, int y, Bird b){
 		x0 = x;
 		y0 = y;
 		tweet = t;
+		bird = b;
 	}
 	
 	/**

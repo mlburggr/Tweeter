@@ -1,5 +1,5 @@
 package com.tweeter.app;
 
 public enum BirdState {
-	NORMAL, MATE, ATTACK
+	DEFAULT, LISTEN, TWEET, MATE, ATTACK
 }

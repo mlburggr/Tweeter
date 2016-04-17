@@ -23,7 +23,7 @@ public abstract class Bird {
 		this.id = r.nextInt();
 		this.posX = origX;
 		this.posY = origY;
-		this.setBirdState(BirdState.NORMAL);
+		this.setBirdState(BirdState.DEFAULT);
 		this.setStateTime(0);
 	}
 	
@@ -53,7 +53,7 @@ public abstract class Bird {
 			tweetFreqEnv.dataQueue.clear();
 			tweetFreqEnv.dataQueue.queueLoop(tweetFreqEnvDat, 0, tweetFreqEnvDat.getNumFrames());
 			
-			tweetQueue.addTweet(tweet, this.posX, this.posY);
+			tweetQueue.addTweet(tweet, this.posX, this.posY, this);
 			
 			System.out.println("Reached!");	
 	}
