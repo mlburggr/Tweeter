@@ -53,6 +53,7 @@ public class TweeterState extends BasicGameState {
 	public static ArrayList<BirdComputer> testBirds;
 	public static Iterator<BirdComputer> iter;
 	public static ArrayList<BirdComputer> birdsToAdd;
+	public static ArrayList<BirdComputer> birdsToRemove;
 	
 	private final double NEUTRAL_MIN = -0.3;
 	private final double NEUTRAL_MAX = -0.3;
@@ -71,7 +72,8 @@ public class TweeterState extends BasicGameState {
 		timePassed = 0;
 		testBirds = new ArrayList<BirdComputer>();
 		birdsToAdd = new ArrayList<BirdComputer>();
-		
+		birdsToRemove = new ArrayList<BirdComputer>();
+	
 	}
 	
 	private void createMap(){
@@ -200,6 +202,24 @@ public class TweeterState extends BasicGameState {
 				}
 			} //end of DEFAULT state 
 			
+			if (b.getBirdState() == BirdState.NEWBORN) {
+				b.setMovingTowards(null);
+				b.setStateTime(b.getStateTime()+delta);
+				timePassed += delta;
+								
+				if (b.getStateTime() > 3000) {
+					b.setStateTime(0);
+					b.setBirdState(BirdState.TWEET);
+				} else if (timePassed > 1250){
+					timePassed = 0;
+					b.moveRandom(map);
+//					Bird partner = b.moveRandom(map);
+//					if(partner != null) {
+//						TweeterState.mate(b, partner, map);
+//					}
+				}
+			} //end of NEWBORN state 
+			
 			else if (b.getBirdState() == BirdState.TWEET) {
 				b.setStateTime(b.getStateTime()+delta);
 				
@@ -209,11 +229,6 @@ public class TweeterState extends BasicGameState {
 					b.tweet(tweetPlyr, tweetQueue, map.sizeX, userBird.posX, random.nextDouble() );
 					
 					//b.moveRandom(map);
-					
-//					Bird partner = b.moveRandom(map);
-//					if(partner != null) {
-//						TweeterState.mate(b, partner, map);
-//					}
 					
 					b.setBirdState(BirdState.LISTEN);
 				}
@@ -235,14 +250,7 @@ public class TweeterState extends BasicGameState {
 						if (compare > NEUTRAL_MAX) {
 							b.mood = BirdMood.MATE;
 							b.moveToCoord(map, tweetnode.x0, tweetnode.y0);
-
-							b.tweet.learn(heard);
-
-//							Bird partner = b.moveToCoord(map, tweetnode.x0, tweetnode.y0);
-//							if(partner != null) {
-//								TweeterState.mate(b, partner, map);
-//							}
-							
+							b.tweet.learn(heard);							
 							b.setBirdState(BirdState.TWEET);
 						}
 						else if (compare >= NEUTRAL_MIN) {
@@ -253,11 +261,7 @@ public class TweeterState extends BasicGameState {
 							b.mood = BirdMood.ATTACK;
 							
 							b.moveAwayCoord(map, tweetnode.x0, tweetnode.y0);
-							
-//							Bird partner = b.moveAwayCoord(map, tweetnode.x0, tweetnode.y0);
-//							if(partner != null) {
-//								TweeterState.mate(b, partner, map);
-//							}
+							b.setBirdState(BirdState.TWEET);
 						}
 				
 					//If the tweetQueue is empty, tweet!	
@@ -476,27 +480,5 @@ public class TweeterState extends BasicGameState {
 	
 	public int getCurrentMode(){
 		return gameMode;
-	}
-	
-
-	private static void mate(BirdComputer dad, Bird mom, Map map) {
-		int xMin, yMin, xMax, yMax;
-		if (dad.getPosX() - 1 > 0) xMin = dad.getPosX() - 1; else xMin = 0;
-		if (dad.getPosY() - 1 > 0) yMin = dad.getPosY() - 1; else yMin = 0;
-		if (dad.getPosX() + 1 >= map.sizeX) xMax = dad.getPosX() - 1; else xMax = map.sizeX-1;
-		if (dad.getPosY() + 1 >= map.sizeY) yMax = dad.getPosY() - 1; else yMax = map.sizeY-1;
-		
-		for (int x = xMin; x <= xMax; x++) {
-			for (int y = yMin; y <= yMax; y++) {
-				Cell c = map.getCellAt(x, y);
-				if (!c.hasBird()) {
-						BirdComputer child = new BirdComputer(x,y, dad, mom); 
-						tweetPlyr.add(child.id);
-						map.addBird(child);
-						break;
-				}
-			}
-		} // end of nested for loop that spawns bird
-				
 	}
 }

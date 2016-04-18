@@ -31,8 +31,13 @@ public class BirdComputer extends Bird{
 		this.energy = 100;
 		Random random = new Random();
 		
+<<<<<<< HEAD
 		this.tweet = new Tweet(dad.tweet, mom.tweet); 
 		this.state = BirdState.DEFAULT;
+=======
+		this.tweet = dad.tweet; // TODO make new combined tweet for child bird
+		this.state = BirdState.NEWBORN;
+>>>>>>> branch 'master' of https://github.com/mlburggr/Tweeter.git
 		TweeterState.tweetQueue.addTweet(this.tweet, this.getPosX(), this.getPosY(), this);
 		TweeterState.birdsToAdd.add(this);
 	}

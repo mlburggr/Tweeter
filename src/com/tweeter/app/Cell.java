@@ -3,7 +3,7 @@ package com.tweeter.app;
 public class Cell {
 	private int locationX;
 	private int locationY;
-	private Cell[] neighbours;
+	protected Cell[] neighbours;
 	private boolean hasBird;
 	private Bird cellBird;
 	

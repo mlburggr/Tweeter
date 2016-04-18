@@ -118,6 +118,12 @@ public class Tweet extends LinkedList<Note>{
 		return diff;
 	}
 	
+	public static double compareFAKE() {
+		Random random = new Random();
+		double x = 2 * (random.nextDouble()) - 1;
+		return x;
+	}
+	
 	/**
 	 * TODO this man, this...
 	 * @param tweet

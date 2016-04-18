@@ -140,15 +140,25 @@ public abstract class Bird {
 	public void attack(Bird enemy, Map map) {
 		this.health -= DAMAGE;
 		enemy.health -= DAMAGE;
-		this.mood = BirdMood.NEUTRAL;
-		enemy.mood = BirdMood.NEUTRAL;
 		
-		if (!this.isUserBird()) {
-			((BirdComputer)this).moveAwayCoord(map, enemy.posX, enemy.posY);
+		// check if this bird dies
+		if (this.health <= 0) {
+			map.removeBird(this.posX, this.posY);
+			if (!this.isUserBird()) { TweeterState.birdsToRemove.add((BirdComputer) this); }
+		}
+		else {
+			this.mood = BirdMood.NEUTRAL;
+			if (!this.isUserBird()) { ((BirdComputer)this).moveAwayCoord(map, enemy.posX, enemy.posY); }
 		}
 		
-		if (!enemy.isUserBird()) {
-			((BirdComputer)enemy).moveAwayCoord(map, this.posX, this.posY);
+		// check if enemy bird dies
+		if (enemy.health <= 0) {
+			map.removeBird(enemy.posX, enemy.posY);
+			if (!enemy.isUserBird()) { TweeterState.birdsToRemove.add((BirdComputer) enemy); }
+		}
+		else {
+			enemy.mood = BirdMood.NEUTRAL;
+			if (!enemy.isUserBird()) { ((BirdComputer)enemy).moveAwayCoord(map, this.posX, this.posY); }
 		}
 	}
 	
