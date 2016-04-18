@@ -79,7 +79,7 @@ public class TweetQueue {
 	
 	public void addTweet(Tweet tweet, int x, int y, Bird b){
 		if (elems == size){
-			int beforeIndex = (index - 1) % elems;
+			int beforeIndex = Math.abs((index - 1) % elems);
 			priorities[beforeIndex] = PRIORITY;
 			tweets[beforeIndex] = new TweetNode(tweet, x, y, b);
 		} else {
