@@ -126,6 +126,7 @@ public abstract class Bird {
 				if (!c.hasBird()) {
 						BirdComputer child = new BirdComputer(x,y, this, partner); 
 						map.addBird(child);
+						TweeterState.tweetPlyr.add(child.id);
 						
 						this.mood = BirdMood.NEUTRAL;
 						partner.mood = BirdMood.NEUTRAL;
