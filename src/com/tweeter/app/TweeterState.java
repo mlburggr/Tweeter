@@ -153,9 +153,9 @@ public class TweeterState extends BasicGameState {
 			graphics.drawLine(0, i, this.width, i);
 		}
 		
-		font.drawString(350, 5, "Points:"+points, Color.black);
-		font.drawString(350, 35, "Energy:"+userBird.getEnergy(), Color.black);
-		font.drawString(350, 65, "Health:"+userBird.getHealth(), Color.black);
+//		font.drawString(350, 5, "Points:"+points, Color.black);
+//		font.drawString(350, 35, "Energy:"+userBird.getEnergy(), Color.black);
+//		font.drawString(350, 65, "Health:"+userBird.getHealth(), Color.black);
 		
 		
 		
@@ -166,8 +166,8 @@ public class TweeterState extends BasicGameState {
 				font.drawString(400, 450, noteToDraw);
 			}
 		}
-		graphics.setColor(Color.black);
-		graphics.fillRect(0, 0, 100, 50);
+//		graphics.setColor(Color.black);
+//		graphics.fillRect(0, 0, 100, 50);
 		
 	}
 
