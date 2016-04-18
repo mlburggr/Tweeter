@@ -80,6 +80,11 @@ public class Map {
 			if (b.mood == BirdMood.MATE && partner.mood == BirdMood.MATE) {
 				b.mate(partner,this);
 			}
+			
+			else if (b.mood == BirdMood.ATTACK && partner.mood == BirdMood.ATTACK) {
+				b.attack(partner,this);
+			}
+			
 			return;
 		}
 		Cell cNew = new Cell(origX,origY);
@@ -98,6 +103,11 @@ public class Map {
 			if (b.mood == BirdMood.MATE && partner.mood == BirdMood.MATE) {
 				b.mate(partner,this);
 			}
+			
+			else if (b.mood == BirdMood.ATTACK && partner.mood == BirdMood.ATTACK) {
+				b.attack(partner,this);
+			}
+			
 			return;
 		}
 		Cell cNew = new Cell(origX,origY);
@@ -116,6 +126,11 @@ public class Map {
 			if (b.mood == BirdMood.MATE && partner.mood == BirdMood.MATE) {
 				b.mate(partner,this);
 			}
+			
+			else if (b.mood == BirdMood.ATTACK && partner.mood == BirdMood.ATTACK) {
+				b.attack(partner,this);
+			}
+			
 			return;
 		}
 		Cell cNew = new Cell(origX,origY);
@@ -134,6 +149,11 @@ public class Map {
 			if (b.mood == BirdMood.MATE && partner.mood == BirdMood.MATE) {
 				b.mate(partner,this);
 			}
+			
+			else if (b.mood == BirdMood.ATTACK && partner.mood == BirdMood.ATTACK) {
+				b.attack(partner,this);
+			}
+			
 			return;
 		}
 		
