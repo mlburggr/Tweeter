@@ -1,6 +1,7 @@
 package com.tweeter.app;
 
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.Random;
 
 import org.newdawn.slick.AngelCodeFont;
@@ -28,9 +29,9 @@ public class TweeterState extends BasicGameState {
 	private int npcBirdCount = 0;
 	
 	//Added by Nick
-	public GlobalTweetPlayer globalTweetPlyr;
-	public TweetQueue tweetQueue;
-	/*
+	public static GlobalTweetPlayer tweetPlyr;
+	public static TweetQueue tweetQueue;
+		/*
 	 * Game Modes
 	 * ------
 	 * These modes are used for processing input.
@@ -48,8 +49,12 @@ public class TweeterState extends BasicGameState {
 	private int gameMode = 1; 
 	
 	private int timePassed;
-	private ArrayList<BirdComputer> testBirds;
-	// private BirdState birdState;
+	public static ArrayList<BirdComputer> testBirds;
+	public static Iterator<BirdComputer> iter;
+	public static ArrayList<BirdComputer> birdsToAdd;
+	
+	private final double NEUTRAL_MIN = -0.25;
+	private final double NEUTRAL_MAX = 0.25;
 	
 	public static final int ID = 2;
 
@@ -57,13 +62,16 @@ public class TweeterState extends BasicGameState {
 	public void init(GameContainer container, StateBasedGame game) throws SlickException {
 		this.width = 500;
 		this.height = 500;
-		timePassed = 0;
-		testBirds = new ArrayList<BirdComputer>();
-		// birdState = BirdState.NORMAL;
 		font = new AngelCodeFont("fonts/demo2.fnt","fonts/demo2_00.tga");
 		notesToAdd = new ArrayList<Character>();
-		tweetQueue = new TweetQueue(10);
-		globalTweetPlyr = new GlobalTweetPlayer( testBirds );
+		
+		tweetQueue = new TweetQueue(20);
+		
+		timePassed = 0;
+		testBirds = new ArrayList<BirdComputer>();
+		birdsToAdd = new ArrayList<BirdComputer>();
+		tweetPlyr = new GlobalTweetPlayer( testBirds );
+
 	}
 	
 	private void createMap(){
@@ -85,23 +93,15 @@ public class TweeterState extends BasicGameState {
 		// Initialize Player bird and add a synth for it to the tweet player
 		this.userBird = new BirdPlayer(0, 1, true, birdEnergyLimit);
 		map.addBird(userBird);
-		globalTweetPlyr.add( userBird.getId() );
+		tweetPlyr.add( userBird.getId() );
 		
 		map.setNeighbors();
-		
-//		Bird b = new BirdComputer(4,4);
-//		map.addBird(b);
-//		Bird b2 = new BirdComputer(5,5);
-//		map.addBird(b2);
-		
-		
-		
 		Random random = new Random();
 		for (int i = 0; i<npcBirdCount; i++) {
 			BirdComputer b = new BirdComputer(random.nextInt(mapSizeX), random.nextInt(mapSizeY));
 			testBirds.add(b);
 			map.addBird(b);
-			tweetQueue.addTweet(b.tweet, b.getPosX(), b.getPosY(), b);
+			//tweetQueue.addTweet(b.tweet, b.getPosX(), b.getPosY(), b);
 		}
 	
 	}
@@ -114,6 +114,7 @@ public class TweeterState extends BasicGameState {
 		}
 		
 		
+		
 		for(int j = 0; j < mapSizeX; j++){
 			for(int k = 0; k < mapSizeY; k++){
 				Cell c = map.getCellAt(j, k);
@@ -122,9 +123,14 @@ public class TweeterState extends BasicGameState {
 //					if (c.getBird().getBirdState() == BirdState.NORMAL) { graphics.setColor(Color.gray); }
 //					else if (c.getBird().getBirdState() == BirdState.TWEET) { graphics.setColor(Color.yellow); }
 				} else if(c.hasBird()){
-					if (c.getBird().getBirdState() == BirdState.MATE) { graphics.setColor(Color.pink); }
-					else if (c.getBird().getBirdState() == BirdState.ATTACK) { graphics.setColor(Color.red); }
-					else if (c.getBird().getBirdState() == BirdState.TWEET) { graphics.setColor(Color.yellow); }
+//					if (c.getBird().getBirdState() == BirdState.MATE) { graphics.setColor(Color.cyan); }
+//					else if (c.getBird().getBirdState() == BirdState.ATTACK) { graphics.setColor(Color.red); }
+					if (c.getBird().getBirdState() == BirdState.TWEET) { graphics.setColor(Color.yellow); }
+					else if (c.getBird().getBirdState() == BirdState.LISTEN) { 
+						if (c.getBird().mood == BirdMood.MATE) { graphics.setColor(Color.pink); }
+						else if (c.getBird().mood == BirdMood.ATTACK) { graphics.setColor(Color.red); }
+						else if (c.getBird().mood == BirdMood.NEUTRAL) { graphics.setColor(Color.green); }
+					}
 					else { graphics.setColor(Color.cyan); }
 				} else {
 					graphics.setColor(Color.white);
@@ -175,8 +181,9 @@ public class TweeterState extends BasicGameState {
 			
 			
 			assert width==height : "Window Width does not match Height";*/
-		outerloop:
-		for (BirdComputer b : testBirds) {
+		for (iter = testBirds.iterator(); iter.hasNext(); ) {
+			BirdComputer b = iter.next();
+			
 			if (b.getBirdState() == BirdState.DEFAULT) {
 				b.setMovingTowards(null);
 				b.setStateTime(b.getStateTime()+delta);
@@ -184,14 +191,88 @@ public class TweeterState extends BasicGameState {
 								
 				if (b.getStateTime() > 5000) {
 					b.setStateTime(0);
-					b.setBirdState(BirdState.LISTEN);
+					b.setBirdState(BirdState.TWEET);
 				} else if (timePassed > 1250){
 					timePassed = 0;
-					b.randomMove(map);
+					
+					b.moveRandom(map);
+					
+//					Bird partner = b.moveRandom(map);
+//					if(partner != null) {
+//						TweeterState.mate(b, partner, map);
+//					}
+					
 				}
-			} //end of MOVING state 
+			} //end of DEFAULT state 
+			
+			else if (b.getBirdState() == BirdState.TWEET) {
+				b.setStateTime(b.getStateTime()+delta);
+				
+				if (b.getStateTime() > 2000) {
+					b.setStateTime(0);
+				
+					// TODO Nick put the sound playing here 
+				
+					tweetQueue.addTweet(b.tweet, b.getPosX(), b.getPosY(), b);
+					
+					b.moveRandom(map);
+					
+//					Bird partner = b.moveRandom(map);
+//					if(partner != null) {
+//						TweeterState.mate(b, partner, map);
+//					}
+					
+					b.setBirdState(BirdState.LISTEN);
+				}
+				
+			} //end of TWEET state
 			
 			else if (b.getBirdState() == BirdState.LISTEN) {
+				b.setStateTime(b.getStateTime()+delta);
+				
+				if (b.getStateTime() > 1250) {
+					b.setStateTime(0);
+				
+					TweetNode tweetnode = tweetQueue.listen(b.getPosX(), b.getPosY());
+				
+					if (tweetnode != null) {
+						Tweet heard = tweetnode.tweet;
+				
+						// TODO Nick, do the learning process here!
+				
+						// TODO Nick, fix the compare method to return both (+) and (-) numbers
+						double compare = Tweet.compare(heard, b.tweet);
+						if (compare > NEUTRAL_MAX) {
+							b.mood = BirdMood.MATE;
+							b.moveToCoord(map, tweetnode.x0, tweetnode.y0);
+							
+//							Bird partner = b.moveToCoord(map, tweetnode.x0, tweetnode.y0);
+//							if(partner != null) {
+//								TweeterState.mate(b, partner, map);
+//							}
+							
+							b.setBirdState(BirdState.TWEET);
+						}
+						else if (compare >= NEUTRAL_MIN) {
+							b.mood = BirdMood.NEUTRAL;
+							b.setBirdState(BirdState.TWEET);
+						}
+						else {
+							b.mood = BirdMood.ATTACK;
+							
+							b.moveAwayCoord(map, tweetnode.x0, tweetnode.y0);
+							
+//							Bird partner = b.moveAwayCoord(map, tweetnode.x0, tweetnode.y0);
+//							if(partner != null) {
+//								TweeterState.mate(b, partner, map);
+//							}
+						}
+				
+					}
+				}
+				
+				
+				/*
 				b.setStateTime(b.getStateTime()+delta);
 				
 				if (b.getStateTime() > 1250) {
@@ -247,34 +328,34 @@ public class TweeterState extends BasicGameState {
 							b.setBirdState(BirdState.DEFAULT);
 						}
 					}
-				} // end of if (b.getStateTime() > 1250)
-			} // end of NORMAL state
-			
-			else if (b.getBirdState() == BirdState.MATE) {
-				//b.setMovingTowards(tweetTree.listen(b.getPosX(), b.getPosY()).bird);
-				
-				b.setMovingTowards(userBird);
-				b.setStateTime(b.getStateTime()+delta);
-				timePassed += delta;
-								
-				if (b.getStateTime() > 6000) {
-					b.setStateTime(0);
-					b.setBirdState(BirdState.LISTEN);
-				} else if (timePassed > 750){
-					timePassed = 0;
-					b.moveTowards(map);
 				}
-			} // end of MATING state
+				*/ // end of if (b.getStateTime() > 1250)
+				
+				
+			} // end of LISTEN state
 			
-			else if (b.getBirdState() == BirdState.TWEET) {
-				tweetQueue.addTweet(b.getTweet(), b.getPosX(), b.getPosY(), b);
-				b.setBirdState(BirdState.LISTEN);
-			} // end of TWEET state
+//			else if (b.getBirdState() == BirdState.MATE) {
+//				//b.setMovingTowards(tweetTree.listen(b.getPosX(), b.getPosY()).bird);
+//				
+//				b.setMovingTowards(userBird);
+//				b.setStateTime(b.getStateTime()+delta);
+//				timePassed += delta;
+//								
+//				if (b.getStateTime() > 6000) {
+//					b.setStateTime(0);
+//					b.setBirdState(BirdState.LISTEN);
+//				} else if (timePassed > 750){
+//					timePassed = 0;
+//					b.moveToBird(map);
+//				}
+//			} // end of MATING state
 			
 		} // end of for each bird loop
 		
+		testBirds.addAll(birdsToAdd);
+		
 	}
-	
+
 	public void keyReleased(int key, char c){
 		System.out.println(key+" "+c);
 		
@@ -351,10 +432,10 @@ public class TweeterState extends BasicGameState {
 		if(key == Input.KEY_TAB){
 				gameMode = 2;
 		}
-		if(key == Input.KEY_X) {
-			for (BirdComputer b : testBirds) { b.setBirdState(BirdState.MATE); }
-			System.out.println("*****NEW***** Birds want to mate!");
-		}
+//		if(key == Input.KEY_X) {
+//			for (BirdComputer b : testBirds) { b.setBirdState(BirdState.MATE); }
+//			System.out.println("*****NEW***** Birds want to mate!");
+//		}
 		if(key == Input.KEY_T) {
 			userBird.setBirdState(BirdState.TWEET);
 			tweetQueue.addTweet(userBird.getTweet(), userBird.getPosX(), userBird.getPosY(), userBird);
@@ -387,4 +468,23 @@ public class TweeterState extends BasicGameState {
 	}
 	
 
+	private static void mate(BirdComputer dad, Bird mom, Map map) {
+		int xMin, yMin, xMax, yMax;
+		if (dad.getPosX() - 1 > 0) xMin = dad.getPosX() - 1; else xMin = 0;
+		if (dad.getPosY() - 1 > 0) yMin = dad.getPosY() - 1; else yMin = 0;
+		if (dad.getPosX() + 1 >= map.sizeX) xMax = dad.getPosX() - 1; else xMax = map.sizeX-1;
+		if (dad.getPosY() + 1 >= map.sizeY) yMax = dad.getPosY() - 1; else yMax = map.sizeY-1;
+		
+		for (int x = xMin; x <= xMax; x++) {
+			for (int y = yMin; y <= yMax; y++) {
+				Cell c = map.getCellAt(x, y);
+				if (!c.hasBird()) {
+						BirdComputer child = new BirdComputer(x,y, dad, mom); 
+						map.addBird(child);
+						break;
+				}
+			}
+		} // end of nested for loop that spawns bird
+				
+	}
 }

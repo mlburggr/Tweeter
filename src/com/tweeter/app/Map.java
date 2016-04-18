@@ -4,12 +4,13 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class Map {
-	private int sizeX;
+	public int sizeX;
 	public int getSizeX() {
 		return sizeX;
 	}
 
-	private int sizeY;
+	public int sizeY;
+
 	private Cell[][] grid;
 	
 	public Map(int sX, int sY){
@@ -72,6 +73,13 @@ public class Map {
 			return;
 		}
 		if(grid[origX][origY-1].hasBird()){
+			
+			// bird wants to go to the same spot
+			// thus, they mate and make new bird
+			Bird partner = grid[origX][origY-1].getBird();
+			if (b.mood == BirdMood.MATE && partner.mood == BirdMood.MATE) {
+				b.mate(partner,this);
+			}
 			return;
 		}
 		Cell cNew = new Cell(origX,origY);
@@ -86,6 +94,10 @@ public class Map {
 			return;
 		}
 		if(grid[origX][origY+1].hasBird()){
+			Bird partner = grid[origX][origY+1].getBird();
+			if (b.mood == BirdMood.MATE && partner.mood == BirdMood.MATE) {
+				b.mate(partner,this);
+			}
 			return;
 		}
 		Cell cNew = new Cell(origX,origY);
@@ -100,6 +112,10 @@ public class Map {
 			return;
 		}
 		if(grid[origX-1][origY].hasBird()){
+			Bird partner = grid[origX-1][origY].getBird();
+			if (b.mood == BirdMood.MATE && partner.mood == BirdMood.MATE) {
+				b.mate(partner,this);
+			}
 			return;
 		}
 		Cell cNew = new Cell(origX,origY);
@@ -114,6 +130,10 @@ public class Map {
 			return;
 		}
 		if(grid[origX+1][origY].hasBird()){
+			Bird partner = grid[origX+1][origY].getBird();
+			if (b.mood == BirdMood.MATE && partner.mood == BirdMood.MATE) {
+				b.mate(partner,this);
+			}
 			return;
 		}
 		

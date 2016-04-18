@@ -23,6 +23,18 @@ public class BirdComputer extends Bird{
 		this.health = 100;
 		this.energy = 100;
 	}
+	
+	// BirdComputer constructor for child bird spawned by dad and mom
+	public BirdComputer(int origX, int origY, Bird dad, Bird mom){
+		super(origX, origY);
+		this.health = 100;
+		this.energy = 100;
+		
+		this.tweet = dad.tweet; // TODO make new combined tweet for child bird
+		this.state = BirdState.DEFAULT;
+		TweeterState.tweetQueue.addTweet(this.tweet, this.getPosX(), this.getPosY(), this);
+		TweeterState.birdsToAdd.add(this);
+	}
 
 	@Override
 	void setMovingTowards(Bird b) {
@@ -57,17 +69,19 @@ public class BirdComputer extends Bird{
 	}
 	
 	// Prototype implementation of NPC birds normal movements
-	public void randomMove(Map map) {
+	public void moveRandom(Map map) {
 		Random random = new Random();
 		int n = random.nextInt(4);
 		if (n==0) { map.moveUp(this, this.getPosX(), this.getPosY()); }
 		else if (n==1) { map.moveDown(this, this.getPosX(), this.getPosY()); }
 		else if (n==2) { map.moveLeft(this, this.getPosX(), this.getPosY()); }
 		else { map.moveRight(this, this.getPosX(), this.getPosY()); }
+		
 	}
+
 	
 	// Current prototype implementation of moving towards user bird
-	public void moveTowards(Map map) {
+	public void moveToBird(Map map) {
 		int x = this.movingTowards.getPosX();
 		int y = this.movingTowards.getPosY();
 		int distX = Math.abs(this.getPosX() - x);
@@ -82,6 +96,40 @@ public class BirdComputer extends Bird{
 			if (distY>1) {
 				if (y > this.getPosY()) { map.moveDown(this, this.getPosX(), this.getPosY()); }
 				else { map.moveUp(this, this.getPosX(), this.getPosY()); }
+			}
+		}
+	}
+	
+	public void moveToCoord(Map map, int x, int y) {
+		int distX = Math.abs(this.getPosX() - x);
+		int distY = Math.abs(this.getPosY() - y);
+		if (distX >= distY) {
+			if (distX>1) {
+				if (x > this.getPosX()) { map.moveRight(this, this.getPosX(), this.getPosY()); }
+				else { map.moveLeft(this, this.getPosX(), this.getPosY()); }
+			}
+		}
+		else {
+			if (distY>1) {
+				if (y > this.getPosY()) { map.moveDown(this, this.getPosX(), this.getPosY()); }
+				else { map.moveUp(this, this.getPosX(), this.getPosY()); }
+			}
+		}
+	}
+	
+	public void moveAwayCoord(Map map, int x, int y) {
+		int distX = Math.abs(this.getPosX() - x);
+		int distY = Math.abs(this.getPosY() - y);
+		if (distX >= distY) {
+			if (distX>1) {
+				if (x > this.getPosX()) { map.moveLeft(this, this.getPosX(), this.getPosY()); }
+				else { map.moveRight(this, this.getPosX(), this.getPosY()); }
+			}
+		}
+		else {
+			if (distY>1) {
+				if (y > this.getPosY()) { map.moveUp(this, this.getPosX(), this.getPosY()); }
+				else { map.moveDown(this, this.getPosX(), this.getPosY()); }
 			}
 		}
 	}
