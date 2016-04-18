@@ -491,6 +491,7 @@ public class TweeterState extends BasicGameState {
 				Cell c = map.getCellAt(x, y);
 				if (!c.hasBird()) {
 						BirdComputer child = new BirdComputer(x,y, dad, mom); 
+						tweetPlyr.add(child.id);
 						map.addBird(child);
 						break;
 				}

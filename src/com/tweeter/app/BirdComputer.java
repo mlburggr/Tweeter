@@ -29,6 +29,7 @@ public class BirdComputer extends Bird{
 		super(origX, origY);
 		this.health = 100;
 		this.energy = 100;
+		Random random = new Random();
 		
 		this.tweet = new Tweet(dad.tweet, mom.tweet); 
 		this.state = BirdState.DEFAULT;
