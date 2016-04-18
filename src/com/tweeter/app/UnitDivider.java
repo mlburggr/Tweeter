@@ -6,43 +6,50 @@ import com.jsyn.ports.UnitOutputPort;
 import com.jsyn.unitgen.Circuit;
 import com.jsyn.unitgen.FunctionEvaluator;
 import com.jsyn.unitgen.PassThrough;
-import com.jsyn.unitgen.UnitGenerator;
 
 public class UnitDivider extends Circuit {
-	private int units = 1;
+	protected int units;
 	
-	private PassThrough sigPassThru;
-	private FunctionEvaluator dividerGen;
-	public UnitInputPort input;
+	protected PassThrough sigPassThru;
+	protected FunctionEvaluator dividerGenMono;
+	public UnitInputPort inputMono;
 	public UnitInputPort amplitude;
-	public UnitOutputPort output;
-	private Function divider;
+	public UnitOutputPort outputMono;
+	protected Function divider;
 	
+	/**
+	 * construct new Mixer to take arbitrarily many units
+	 * (but initially has none)
+	 */
 	public UnitDivider(){
 		units = 0;
 
 		divider = null;
 
-		add( dividerGen = new FunctionEvaluator() );
+		add( dividerGenMono = new FunctionEvaluator() );
 		add( sigPassThru = new PassThrough() );
 				
-		addPort( input = sigPassThru.input );
-		addPort( amplitude = dividerGen.amplitude );
+		addPort( inputMono = sigPassThru.input );
+				
+		sigPassThru.output.connect(0, dividerGenMono.input, 0 );		
+		addPort( outputMono = dividerGenMono.output );
 		
-		sigPassThru.output.connect( dividerGen.input );
-		
-		addPort( output = dividerGen.output );
 	}
 	
+	/**
+	 * Add a new input
+	 *
+	 * @param newUnit : unit to be added
+	 */
 	public void addInput(UnitOutputPort newUnit){
-		newUnit.connect( input );
+		newUnit.connect(0, inputMono, 0 );
+		
 		units++;
 		
 		divider = new Function() { 
 			public double evaluate( double x ){
 		return  (x/units) - .1; }};
 		
-		dividerGen.function.set(divider);
+		dividerGenMono.function.set(divider);
 	}
-	
 }
