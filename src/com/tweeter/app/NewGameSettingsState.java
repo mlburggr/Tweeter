@@ -25,6 +25,7 @@ public class NewGameSettingsState extends BasicGameState {
 	public static String sizeText;
 	public static String npcText;
 	public static String birdEnergyText;
+	private Image bgImage;
 
 	@Override
 	public void init(GameContainer container, StateBasedGame game) throws SlickException {
@@ -33,8 +34,9 @@ public class NewGameSettingsState extends BasicGameState {
 		sizeField = new TextField(container,font,100,100,50,40);
 		npcField = new TextField(container,font,100,200,50,40);
 		birdEnergyField = new TextField(container,font,100,300,50,40);
-		playButtonImage = new Image("res/start.jpg");
+		playButtonImage = new Image("res/Play.png");
 		playButtonArea = new MouseOverArea(container, playButtonImage, 200, 200);
+		bgImage = new Image("res/background.png");
 		
 		
 		
@@ -46,9 +48,10 @@ public class NewGameSettingsState extends BasicGameState {
 			this.init(container,game);
 			return;
 		}
-		font.drawString(5, 50, "Size of Field (n x n):", Color.white);
-		font.drawString(5, 150, "Inital NPCs:", Color.white);
-		font.drawString(5, 250, "Max Energy:", Color.white);
+		graphics.drawImage(bgImage, 0, 0);
+		font.drawString(50, 50, "Size of Field (n x n):", Color.white);
+		font.drawString(50, 150, "Inital NPCs:", Color.white);
+		font.drawString(50, 250, "Max Energy:", Color.white);
 		sizeField.render(container, graphics);
 		npcField.render(container, graphics);
 		birdEnergyField.render(container, graphics);
