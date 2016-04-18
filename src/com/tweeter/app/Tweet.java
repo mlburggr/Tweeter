@@ -30,6 +30,7 @@ public class Tweet extends LinkedList<Note>{
 	public Tweet(char c){
 		super();
 		add(Note.getNote(c));
+
 	}
 	
 	/**
@@ -114,14 +115,18 @@ public class Tweet extends LinkedList<Note>{
 	 * @param args
 	 */
 	public static void main(String[] args){
-		TweetPlayer tweetPlyr = new TweetPlayer();
-		char [] tweetstring1 = {'a','s','d','q','w','e'};
-		Tweet testtweet1 = new Tweet(tweetstring1);
-		char [] tweetstring2 = {'s','d','q','w','e','a'};
-		Tweet testtweet2 = new Tweet(tweetstring2);
+		GlobalTweetPlayer testplyr = new GlobalTweetPlayer();
+		BirdComputer testBird = new BirdComputer(5,0);
+		testplyr.add( testBird.getId() );
+		testBird.tweet(testplyr, new TweetQueue(1), 30);
 		
-		tweetPlyr.playTweet(testtweet1, 1, 0);
-		//tweetPlyr.playTweet(testtweet2);
-
+		try {
+			Thread.sleep( (long) (testBird.tweet.size() * Note.DURATION_SUM * 1000) );
+		} catch (InterruptedException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+		System.exit(0);
 	}
 }

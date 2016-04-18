@@ -22,7 +22,10 @@ public enum Note {
 	public static final double BASE = 220.0;
 	
 	public static final int SUM = A.semi + S.semi + D.semi + Q.semi + W.semi + E.semi;
-	public static final double DURATION = 0.42;
+	public static final double DURATION_1 = 0.2;
+	public static final double DURATION_2 = 0.05;
+	public static final double DURATION_3 = 0.05;
+	public static final double DURATION_SUM = DURATION_1 + DURATION_2 + DURATION_3;
 	
 	
 	Note(char c, int i){
@@ -65,7 +68,7 @@ public enum Note {
 		case 5:
 			return E;
 		default:
-			throw new IllegalArgumentException(String.format("argument %c is not  note" ,n));}
+			throw new IllegalArgumentException(String.format("argument %s is not  note" , Integer.toString(n) ));}
 	}
 	
 	

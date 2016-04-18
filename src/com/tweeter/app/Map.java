@@ -5,6 +5,10 @@ import java.util.List;
 
 public class Map {
 	private int sizeX;
+	public int getSizeX() {
+		return sizeX;
+	}
+
 	private int sizeY;
 	private Cell[][] grid;
 	

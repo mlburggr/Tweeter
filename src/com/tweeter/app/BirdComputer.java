@@ -7,17 +7,17 @@ public class BirdComputer extends Bird{
 	/**
 	 * Maximum length of a computer bird's random tweet.
 	 */
-	private static int TWEET_MAXLENGTH = 12;
+	private static int TWEET_MAXLENGTH = 8;
 	
 	public BirdComputer(int origX, int origY){
 		super(origX, origY);
 		Random random = new Random(42);
 		
 		//Add random length tweet
-		int length = random.nextInt() % TWEET_MAXLENGTH;
+		int length = (Math.abs(random.nextInt()) % (TWEET_MAXLENGTH-1)) +1;
 		this.tweet = new Tweet();
 		for (int i =0; i < length; i ++)
-			tweet.add(Note.getNote( random.nextInt() % 6 ) );
+			tweet.add(Note.getNote( Math.abs( random.nextInt() ) % 6 ) );
 		//
 		
 		this.health = 100;

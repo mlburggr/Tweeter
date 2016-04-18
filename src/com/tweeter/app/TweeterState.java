@@ -28,7 +28,7 @@ public class TweeterState extends BasicGameState {
 	private int npcBirdCount = 0;
 	
 	//Added by Nick
-	public TweetPlayer tweetPlyr;
+	public GlobalTweetPlayer globalTweetPlyr;
 	public TweetQueue tweetQueue;
 	/*
 	 * Game Modes
@@ -63,7 +63,7 @@ public class TweeterState extends BasicGameState {
 		font = new AngelCodeFont("fonts/demo2.fnt","fonts/demo2_00.tga");
 		notesToAdd = new ArrayList<Character>();
 		tweetQueue = new TweetQueue(10);
-		tweetPlyr = new TweetPlayer();
+		globalTweetPlyr = new GlobalTweetPlayer( testBirds );
 	}
 	
 	private void createMap(){
@@ -82,9 +82,10 @@ public class TweeterState extends BasicGameState {
 				map.addToGrid(c,k,l);
 			}
 		}
-		
-		this.userBird = new BirdPlayer(0,1,true,birdEnergyLimit);
+		// Initialize Player bird and add a synth for it to the tweet player
+		this.userBird = new BirdPlayer(0, 1, true, birdEnergyLimit);
 		map.addBird(userBird);
+		globalTweetPlyr.add( userBird.getId() );
 		
 		map.setNeighbors();
 		
@@ -92,6 +93,8 @@ public class TweeterState extends BasicGameState {
 //		map.addBird(b);
 //		Bird b2 = new BirdComputer(5,5);
 //		map.addBird(b2);
+		
+		
 		
 		Random random = new Random();
 		for (int i = 0; i<npcBirdCount; i++) {
