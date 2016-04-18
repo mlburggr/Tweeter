@@ -27,11 +27,11 @@ public abstract class Bird {
 		this.mood = BirdMood.NEUTRAL;
 	}
 	
-	public void tweet(GlobalTweetPlayer tweetplyr, TweetQueue tweetQueue, int mapSizeX, int userBirdX){
+	public void tweet(GlobalTweetPlayer tweetplyr, TweetQueue tweetQueue, int mapSizeX, int userBirdX, double delay){
 		double xposition = (2.0 * posX / (double) mapSizeX) - 1.0;
 		double bposition = 1 - (Math.abs(posX - userBirdX) / mapSizeX) ;
 		System.out.println(xposition);
-		tweetplyr.getTweetSynth(this.id).queueTweet(tweet, xposition, bposition);		
+		tweetplyr.getTweetSynth(this.id).queueTweet(tweet, xposition, bposition, delay);		
 		tweetQueue.addTweet(tweet, this.posX, this.posY, this);
 		
 		System.out.println("Reached!");	

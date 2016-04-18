@@ -31,6 +31,7 @@ public class TweeterState extends BasicGameState {
 	//Added by Nick
 	public static GlobalTweetPlayer tweetPlyr;
 	public static TweetQueue tweetQueue;
+	public static Random random = new Random(42);
 		/*
 	 * Game Modes
 	 * ------
@@ -53,8 +54,8 @@ public class TweeterState extends BasicGameState {
 	public static Iterator<BirdComputer> iter;
 	public static ArrayList<BirdComputer> birdsToAdd;
 	
-	private final double NEUTRAL_MIN = -0.25;
-	private final double NEUTRAL_MAX = 0.25;
+	private final double NEUTRAL_MIN = -0.3;
+	private final double NEUTRAL_MAX = -0.3;
 	
 	public static final int ID = 2;
 
@@ -128,12 +129,13 @@ public class TweeterState extends BasicGameState {
 				} else if(c.hasBird()){
 //					if (c.getBird().getBirdState() == BirdState.MATE) { graphics.setColor(Color.cyan); }
 //					else if (c.getBird().getBirdState() == BirdState.ATTACK) { graphics.setColor(Color.red); }
-					if (c.getBird().getBirdState() == BirdState.TWEET) { graphics.setColor(Color.yellow); }
-					else if (c.getBird().getBirdState() == BirdState.LISTEN) { 
-						if (c.getBird().mood == BirdMood.MATE) { graphics.setColor(Color.pink); }
-						else if (c.getBird().mood == BirdMood.ATTACK) { graphics.setColor(Color.red); }
-						else if (c.getBird().mood == BirdMood.NEUTRAL) { graphics.setColor(Color.green); }
-					}
+//					if (c.getBird().getBirdState() == BirdState.TWEET) { graphics.setColor(Color.yellow); }
+//					else
+					//if (c.getBird().getBirdState() == BirdState.LISTEN) { 
+					if (c.getBird().mood == BirdMood.MATE) { graphics.setColor(Color.pink); }
+					else if (c.getBird().mood == BirdMood.ATTACK) { graphics.setColor(Color.red); }
+					else if (c.getBird().mood == BirdMood.NEUTRAL) { graphics.setColor(Color.green); }
+					//}
 					else { graphics.setColor(Color.cyan); }
 				} else {
 					graphics.setColor(Color.white);
@@ -204,7 +206,7 @@ public class TweeterState extends BasicGameState {
 				if (b.getStateTime() > 2000) {
 					b.setStateTime(0);
 					
-					b.tweet(tweetPlyr, tweetQueue, map.sizeX, userBird.posX);
+					b.tweet(tweetPlyr, tweetQueue, map.sizeX, userBird.posX, random.nextDouble() );
 					
 					//b.moveRandom(map);
 					
@@ -228,15 +230,14 @@ public class TweeterState extends BasicGameState {
 				
 					if (tweetnode != null) {
 						Tweet heard = tweetnode.tweet;
-				
-						// TODO Nick, do the learning process here!
-				
-						// TODO Nick, fix the compare method to return both (+) and (-) numbers
+						
 						double compare = Tweet.compare(heard, b.tweet);
 						if (compare > NEUTRAL_MAX) {
 							b.mood = BirdMood.MATE;
 							b.moveToCoord(map, tweetnode.x0, tweetnode.y0);
-							
+
+							b.tweet.learn(heard);
+
 //							Bird partner = b.moveToCoord(map, tweetnode.x0, tweetnode.y0);
 //							if(partner != null) {
 //								TweeterState.mate(b, partner, map);
@@ -259,7 +260,12 @@ public class TweeterState extends BasicGameState {
 //							}
 						}
 				
+					//If the tweetQueue is empty, tweet!	
+					} else {
+						b.mood = BirdMood.NEUTRAL;
+						b.setBirdState(BirdState.TWEET);
 					}
+						
 				}
 				
 				
@@ -398,10 +404,22 @@ public class TweeterState extends BasicGameState {
 				}
 				notesToAdd.clear();
 				userBird.setTweet(new Tweet(cs));
-				userBird.tweet(tweetPlyr,tweetQueue, map.sizeX, userBird.posX);
+				userBird.tweet(tweetPlyr,tweetQueue, map.sizeX, userBird.posX, 0);
 				break;
-				
 			}
+			if (!exiting && notesToAdd.size() > 3){
+				gameMode = 1;
+				exiting = true;
+				noteToDraw = "";
+				char[] cs = new char[notesToAdd.size()];
+				for(int i=0; i<cs.length; i++){
+					cs[i] = notesToAdd.get(i);
+				}
+				notesToAdd.clear();
+				userBird.setTweet(new Tweet(cs));
+				userBird.tweet(tweetPlyr,tweetQueue, map.sizeX, userBird.posX, 0);
+			}
+
 		}
 		
 		if(gameMode == 1 && !exiting){

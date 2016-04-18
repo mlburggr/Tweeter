@@ -1,6 +1,8 @@
 package com.tweeter.app;
 
 
+import java.util.Random;
+
 import com.jsyn.data.Function;
 import com.jsyn.data.SegmentedEnvelope;
 import com.jsyn.ports.UnitInputPort;
@@ -10,6 +12,7 @@ import com.jsyn.unitgen.*;
 
 public class TweetSynth extends Circuit{
 	// Constants
+	private static Random r = new Random(42);
 	private static final int HARMONIC1 = 3;
 	private static final int HARMONIC2 = 5;
 	private static final int NUMUNITS = 3;
@@ -50,11 +53,11 @@ public class TweetSynth extends Circuit{
 									 Note.DURATION_2,  0.6,
 									 Note.DURATION_3,  0},
 								// Second Envelope
-								   { Note.DURATION_1, 1,
-								     Note.DURATION_2 + Note.DURATION_3,  0},
+								   { Note.DURATION_1, 0,
+								     Note.DURATION_2 + Note.DURATION_3,  1},
 								// Third Envelope
-								   { Note.DURATION_SUM - Note.DURATION_3,  1,
-								     Note.DURATION_3, 0}};
+								   { Note.DURATION_SUM - Note.DURATION_3,  0,
+								     Note.DURATION_3, 1}};
 	
 	private SegmentedEnvelope [] ampEnvDats = new SegmentedEnvelope[NUMUNITS];	
 
@@ -113,20 +116,22 @@ public class TweetSynth extends Circuit{
 	 * 
 	 * @param tweet
 	 */
-	public void queueTweet(Tweet tweet, double xposition, double bposition){
+	public void queueTweet(Tweet tweet, double xposition, double bposition, double delay){
 			Note [] tweetArr = tweet.toArray( new Note [0]);
 			
 			// set envelope data for pan and frequency
 			double [] panDat = { 0, xposition } ; 
 			double [] ampDat = { 0, bposition } ;
 			
-			double [] tweetFreqDat = new double[4 * (tweetArr.length+1)]; 
+			double [] tweetFreqDat = new double[4 * (tweetArr.length+1) + 2]; 
 			
 			// Translate tweet
-			for (int i =0 ,j = 0; i < tweetArr.length * 4; i += 4, j++){
-				tweetFreqDat[i] = 0.0 ;
+			tweetFreqDat[0] = delay *  7;
+			tweetFreqDat[1] = 0;
+			for (int i =2 ,j = 0; i < (tweetArr.length * 4) + 2; i += 4, j++){
+				tweetFreqDat[i] = Note.DURATION_3 ;
 				tweetFreqDat[i+1] = Note.BASE * (Math.pow(Note.SEMITONE, tweetArr[j].semi));
-				tweetFreqDat[i+2] = Note.DURATION_SUM; 
+				tweetFreqDat[i+2] = Note.DURATION_SUM - Note.DURATION_3; 
 				tweetFreqDat[i+3] = tweetFreqDat[i+1];
 				System.out.printf("%fhz for %fsecs\n", tweetFreqDat[i+1], tweetFreqDat[i+2]);}
 			// end it son

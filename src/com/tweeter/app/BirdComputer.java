@@ -7,7 +7,7 @@ public class BirdComputer extends Bird{
 	/**
 	 * Maximum length of a computer bird's random tweet.
 	 */
-	private static int TWEET_MAXLENGTH = 8;
+	public static int TWEET_MAXLENGTH = 4;
 	
 	public BirdComputer(int origX, int origY){
 		super(origX, origY);
@@ -30,7 +30,7 @@ public class BirdComputer extends Bird{
 		this.health = 100;
 		this.energy = 100;
 		
-		this.tweet = dad.tweet; // TODO make new combined tweet for child bird
+		this.tweet = new Tweet(dad.tweet, mom.tweet); 
 		this.state = BirdState.DEFAULT;
 		TweeterState.tweetQueue.addTweet(this.tweet, this.getPosX(), this.getPosY(), this);
 		TweeterState.birdsToAdd.add(this);
@@ -70,13 +70,13 @@ public class BirdComputer extends Bird{
 	
 	// Prototype implementation of NPC birds normal movements
 	public void moveRandom(Map map) {
-		Random random = new Random();
+		/*Random random = new Random();
 		int n = random.nextInt(4);
 		if (n==0) { map.moveUp(this, this.getPosX(), this.getPosY()); }
 		else if (n==1) { map.moveDown(this, this.getPosX(), this.getPosY()); }
 		else if (n==2) { map.moveLeft(this, this.getPosX(), this.getPosY()); }
 		else { map.moveRight(this, this.getPosX(), this.getPosY()); }
-		
+		*/
 	}
 
 	

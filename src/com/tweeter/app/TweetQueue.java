@@ -16,7 +16,7 @@ public class TweetQueue {
 	/**
 	 * Initial level of priority when tweet is added.
 	 */
-	public static final int PRIORITY = 10;
+	public static final int PRIORITY = 40;
 	
 	
 	/**
