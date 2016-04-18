@@ -52,6 +52,7 @@ public class TweeterState extends BasicGameState {
 	public static ArrayList<BirdComputer> testBirds;
 	public static Iterator<BirdComputer> iter;
 	public static ArrayList<BirdComputer> birdsToAdd;
+	public static ArrayList<BirdComputer> birdsToRemove;
 	
 	private final double NEUTRAL_MIN = -0.25;
 	private final double NEUTRAL_MAX = 0.25;
@@ -70,6 +71,7 @@ public class TweeterState extends BasicGameState {
 		timePassed = 0;
 		testBirds = new ArrayList<BirdComputer>();
 		birdsToAdd = new ArrayList<BirdComputer>();
+		birdsToRemove = new ArrayList<BirdComputer>();
 		
 	}
 	
@@ -126,14 +128,13 @@ public class TweeterState extends BasicGameState {
 //					if (c.getBird().getBirdState() == BirdState.NORMAL) { graphics.setColor(Color.gray); }
 //					else if (c.getBird().getBirdState() == BirdState.TWEET) { graphics.setColor(Color.yellow); }
 				} else if(c.hasBird()){
-//					if (c.getBird().getBirdState() == BirdState.MATE) { graphics.setColor(Color.cyan); }
-//					else if (c.getBird().getBirdState() == BirdState.ATTACK) { graphics.setColor(Color.red); }
 					if (c.getBird().getBirdState() == BirdState.TWEET) { graphics.setColor(Color.yellow); }
 					else if (c.getBird().getBirdState() == BirdState.LISTEN) { 
 						if (c.getBird().mood == BirdMood.MATE) { graphics.setColor(Color.pink); }
 						else if (c.getBird().mood == BirdMood.ATTACK) { graphics.setColor(Color.red); }
 						else if (c.getBird().mood == BirdMood.NEUTRAL) { graphics.setColor(Color.green); }
 					}
+					else if (c.getBird().getBirdState() == BirdState.LISTEN) { graphics.setColor(Color.blue); }
 					else { graphics.setColor(Color.cyan); }
 				} else {
 					graphics.setColor(Color.white);
@@ -198,6 +199,24 @@ public class TweeterState extends BasicGameState {
 				}
 			} //end of DEFAULT state 
 			
+			if (b.getBirdState() == BirdState.NEWBORN) {
+				b.setMovingTowards(null);
+				b.setStateTime(b.getStateTime()+delta);
+				timePassed += delta;
+								
+				if (b.getStateTime() > 3000) {
+					b.setStateTime(0);
+					b.setBirdState(BirdState.TWEET);
+				} else if (timePassed > 1250){
+					timePassed = 0;
+					b.moveRandom(map);
+//					Bird partner = b.moveRandom(map);
+//					if(partner != null) {
+//						TweeterState.mate(b, partner, map);
+//					}
+				}
+			} //end of NEWBORN state 
+			
 			else if (b.getBirdState() == BirdState.TWEET) {
 				b.setStateTime(b.getStateTime()+delta);
 				
@@ -207,11 +226,6 @@ public class TweeterState extends BasicGameState {
 					b.tweet(tweetPlyr, tweetQueue, map.sizeX, userBird.posX);
 					
 					//b.moveRandom(map);
-					
-//					Bird partner = b.moveRandom(map);
-//					if(partner != null) {
-//						TweeterState.mate(b, partner, map);
-//					}
 					
 					b.setBirdState(BirdState.LISTEN);
 				}
@@ -227,21 +241,17 @@ public class TweeterState extends BasicGameState {
 					TweetNode tweetnode = tweetQueue.listen(b.getPosX(), b.getPosY());
 				
 					if (tweetnode != null) {
-						Tweet heard = tweetnode.tweet;
 				
 						// TODO Nick, do the learning process here!
 				
 						// TODO Nick, fix the compare method to return both (+) and (-) numbers
-						double compare = Tweet.compare(heard, b.tweet);
+						
+						//double compare = Tweet.compare(tweetnode.tweet, b.tweet);
+						double compare = Tweet.compareFAKE();
+						
 						if (compare > NEUTRAL_MAX) {
 							b.mood = BirdMood.MATE;
 							b.moveToCoord(map, tweetnode.x0, tweetnode.y0);
-							
-//							Bird partner = b.moveToCoord(map, tweetnode.x0, tweetnode.y0);
-//							if(partner != null) {
-//								TweeterState.mate(b, partner, map);
-//							}
-							
 							b.setBirdState(BirdState.TWEET);
 						}
 						else if (compare >= NEUTRAL_MIN) {
@@ -250,100 +260,21 @@ public class TweeterState extends BasicGameState {
 						}
 						else {
 							b.mood = BirdMood.ATTACK;
-							
 							b.moveAwayCoord(map, tweetnode.x0, tweetnode.y0);
-							
-//							Bird partner = b.moveAwayCoord(map, tweetnode.x0, tweetnode.y0);
-//							if(partner != null) {
-//								TweeterState.mate(b, partner, map);
-//							}
+							b.setBirdState(BirdState.TWEET);
 						}
 				
 					}
 				}
-				
-				
-				/*
-				b.setStateTime(b.getStateTime()+delta);
-				
-				if (b.getStateTime() > 1250) {
-					b.setStateTime(0);
-					
-					if (b.getMovingTowards() == null) {
-						b.randomMove(map);
-						TweetNode node = tweetQueue.listen(b.getPosX(), b.getPosY());
-						if (node!=null) {
-							if (node.bird.getBirdState() == BirdState.LISTEN
-									&& Tweet.compare(node.tweet, b.tweet) >= 0) {
-								if (node.bird.movingTowards == null) {
-									b.setMovingTowards(node.bird);
-									node.bird.setMovingTowards(b);
-								}
-							}
-						}
-						else {
-							b.randomMove(map);
-						}
-					}
-					else {
-						Bird target = b.getMovingTowards();
-						if (!target.equals(b)) {
-							double distance = Math.hypot(b.getPosX()-target.getPosX(), b.getPosY()-target.getPosY());
-							if (distance <= Math.sqrt(2)) {
-								int x, y;
-								if (b.getPosX() - 1 > 0) x = b.getPosX() - 1; else x = 0;
-								if (b.getPosY() - 1 > 0) y = b.getPosY() - 1; else y = 0;
-								for (; x <= b.getPosX()+1; x++) {
-									for (; y <= b.getPosY()+1; y++) {
-										Cell c = map.getCellAt(x, y);
-										if (!c.hasBird()) {
-											BirdComputer spawn = new BirdComputer(x,y); 
-											tweetQueue.addTweet(spawn.tweet, spawn.getPosX(), spawn.getPosY(), spawn);
-											spawn.setTweet(b.tweet);
-											spawn.setBirdState(BirdState.DEFAULT);
-											testBirds.add(spawn);
-											map.addBird(spawn);
-											target.setBirdState(BirdState.DEFAULT);
-											b.setBirdState(BirdState.DEFAULT);
-											break outerloop;
-										}
-									}
-								} // end of nested for loop that spawns bird
-							}
-							else {
-								b.moveTowards(map);
-							}
-						}
-						else {
-							b.randomMove(map);
-							b.setBirdState(BirdState.DEFAULT);
-						}
-					}
-				}
-				*/ // end of if (b.getStateTime() > 1250)
-				
 				
 			} // end of LISTEN state
 			
-//			else if (b.getBirdState() == BirdState.MATE) {
-//				//b.setMovingTowards(tweetTree.listen(b.getPosX(), b.getPosY()).bird);
-//				
-//				b.setMovingTowards(userBird);
-//				b.setStateTime(b.getStateTime()+delta);
-//				timePassed += delta;
-//								
-//				if (b.getStateTime() > 6000) {
-//					b.setStateTime(0);
-//					b.setBirdState(BirdState.LISTEN);
-//				} else if (timePassed > 750){
-//					timePassed = 0;
-//					b.moveToBird(map);
-//				}
-//			} // end of MATING state
-			
 		} // end of for each bird loop
 		
+		// This adds the new child birds to the array list after the for loop
+		// is executed to prevent concurrent modification exception.
 		testBirds.addAll(birdsToAdd);
+		testBirds.removeAll(birdsToRemove);
 		
 	}
 
@@ -425,23 +356,13 @@ public class TweeterState extends BasicGameState {
 		if(key == Input.KEY_TAB){
 				gameMode = 2;
 		}
-//		if(key == Input.KEY_X) {
-//			for (BirdComputer b : testBirds) { b.setBirdState(BirdState.MATE); }
-//			System.out.println("*****NEW***** Birds want to mate!");
+//		if(key == Input.KEY_T) {
+//			userBird.setBirdState(BirdState.TWEET);
+//			tweetQueue.addTweet(userBird.getTweet(), userBird.getPosX(), userBird.getPosY(), userBird);
+//			System.out.println("##### added to tweetQueue");
+//			
+//			userBird.setBirdState(BirdState.LISTEN);
 //		}
-		if(key == Input.KEY_T) {
-			userBird.setBirdState(BirdState.TWEET);
-			tweetQueue.addTweet(userBird.getTweet(), userBird.getPosX(), userBird.getPosY(), userBird);
-			System.out.println("##### added to tweetQueue");
-			try {
-				Thread.sleep(1000);
-			} catch (InterruptedException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-			
-			userBird.setBirdState(BirdState.LISTEN);
-		}
 		// userBird.setEnergy(userBird.getEnergy() - 5); TODO uncomment later
 		}
 		
@@ -461,23 +382,23 @@ public class TweeterState extends BasicGameState {
 	}
 	
 
-	private static void mate(BirdComputer dad, Bird mom, Map map) {
-		int xMin, yMin, xMax, yMax;
-		if (dad.getPosX() - 1 > 0) xMin = dad.getPosX() - 1; else xMin = 0;
-		if (dad.getPosY() - 1 > 0) yMin = dad.getPosY() - 1; else yMin = 0;
-		if (dad.getPosX() + 1 >= map.sizeX) xMax = dad.getPosX() - 1; else xMax = map.sizeX-1;
-		if (dad.getPosY() + 1 >= map.sizeY) yMax = dad.getPosY() - 1; else yMax = map.sizeY-1;
-		
-		for (int x = xMin; x <= xMax; x++) {
-			for (int y = yMin; y <= yMax; y++) {
-				Cell c = map.getCellAt(x, y);
-				if (!c.hasBird()) {
-						BirdComputer child = new BirdComputer(x,y, dad, mom); 
-						map.addBird(child);
-						break;
-				}
-			}
-		} // end of nested for loop that spawns bird
-				
-	}
+//	private static void mate(BirdComputer dad, Bird mom, Map map) {
+//		int xMin, yMin, xMax, yMax;
+//		if (dad.getPosX() - 1 > 0) xMin = dad.getPosX() - 1; else xMin = 0;
+//		if (dad.getPosY() - 1 > 0) yMin = dad.getPosY() - 1; else yMin = 0;
+//		if (dad.getPosX() + 1 >= map.sizeX) xMax = dad.getPosX() - 1; else xMax = map.sizeX-1;
+//		if (dad.getPosY() + 1 >= map.sizeY) yMax = dad.getPosY() - 1; else yMax = map.sizeY-1;
+//		
+//		for (int x = xMin; x <= xMax; x++) {
+//			for (int y = yMin; y <= yMax; y++) {
+//				Cell c = map.getCellAt(x, y);
+//				if (!c.hasBird()) {
+//						BirdComputer child = new BirdComputer(x,y, dad, mom); 
+//						map.addBird(child);
+//						break;
+//				}
+//			}
+//		} // end of nested for loop that spawns bird	
+//	}
+	
 }

@@ -1,5 +1,6 @@
 package com.tweeter.app;
 import java.util.LinkedList;
+import java.util.Random;
 
 import com.tweeter.app.Note;
 import java.lang.Math.*;
@@ -105,6 +106,12 @@ public class Tweet extends LinkedList<Note>{
 		double diff = Math.log(v1[tsize]/(2*(Note.SUM * hsize)));
 		System.out.printf("Difference: %f\n", diff);
 		return diff;
+	}
+	
+	public static double compareFAKE() {
+		Random random = new Random();
+		double x = 2 * (random.nextDouble()) - 1;
+		return x;
 	}
 	
 	/**
