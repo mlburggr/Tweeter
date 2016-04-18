@@ -10,14 +10,16 @@ public abstract class Bird {
 	protected int posX;
 	protected int posY;
 	protected Bird movingTowards;	// private to protected for abstraction
-	private BirdState state;
-	private int stateTime;
+	protected BirdState state;
+	protected BirdMood mood;
+	protected int stateTime;
 
 	public Bird(int origX, int origY){
 		this.posX = origX;
 		this.posY = origY;
-		this.setBirdState(BirdState.DEFAULT);
-		this.setStateTime(0);
+		this.state = BirdState.DEFAULT;
+		this.stateTime = 0;
+		this.mood = BirdMood.NEUTRAL;
 	}
 	
 	public Bird(int origX, int origY, boolean userBird){
@@ -107,6 +109,26 @@ public abstract class Bird {
 
 	public void setStateTime(int stateTime) {
 		this.stateTime = stateTime;
+	}
+	
+	public void mate(Bird partner, Map map) {
+		int xMin, yMin, xMax, yMax;
+		if (this.getPosX() - 1 > 0) xMin = this.getPosX() - 1; else xMin = 0;
+		if (this.getPosY() - 1 > 0) yMin = this.getPosY() - 1; else yMin = 0;
+		if (this.getPosX() + 1 >= map.sizeX) xMax = this.getPosX() - 1; else xMax = map.sizeX-1;
+		if (this.getPosY() + 1 >= map.sizeY) yMax = this.getPosY() - 1; else yMax = map.sizeY-1;
+		
+		for (int x = xMin; x <= xMax; x++) {
+			for (int y = yMin; y <= yMax; y++) {
+				Cell c = map.getCellAt(x, y);
+				if (!c.hasBird()) {
+						BirdComputer child = new BirdComputer(x,y, this, partner); 
+						map.addBird(child);
+						break;
+				}
+			}
+		} // end of nested for loop that spawns bird
+		
 	}
 	
 }
