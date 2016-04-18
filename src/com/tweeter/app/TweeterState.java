@@ -163,6 +163,8 @@ public class TweeterState extends BasicGameState {
 				font.drawString(150, 150, noteToDraw);
 			}
 		}
+		graphics.setColor(Color.black);
+		graphics.fillRect(0, 0, 100, 50);
 		
 	}
 

@@ -98,8 +98,9 @@ public class Tweet extends LinkedList<Note>{
 			for (int j = 0; j < v0.length; j++)
 				v0[j] = v1[j];
 		}
-
-		return Math.log(v1[tsize]/(Note.SUM * hsize));
+		double diff = Math.log(v1[tsize]/(2*(Note.SUM * hsize)));
+		System.out.printf("Difference: %f", diff);
+		return diff;
 	}
 	
 	/**
@@ -119,8 +120,8 @@ public class Tweet extends LinkedList<Note>{
 		char [] tweetstring2 = {'s','d','q','w','e','a'};
 		Tweet testtweet2 = new Tweet(tweetstring2);
 		
-		tweetPlyr.playTweet(testtweet1);
-		tweetPlyr.playTweet(testtweet2);
+		tweetPlyr.playTweet(testtweet1, 1, 0);
+		//tweetPlyr.playTweet(testtweet2);
 
 	}
 }

@@ -12,17 +12,16 @@ import com.tweeter.app.Note;
 import com.tweeter.app.Tweet;
 import com.tweeter.app.TweetSynth;
 
+
+
+/**
+ * Remove this class, it is redundant
+ * @author nick
+ *
+ */
 public class TweetPlayer {
 
-	/**
-	 * Frequency step of one semitone in hz. (2 ^ 1/12)
-	 */
-	public static final double SEMITONE = 1.059463094;	
 	
-	/**
-	 * Base frequency (A3)
-	 */
-	public static final double BASE = 220.0;
 	
 	
 	private LineOut lineOut;
@@ -31,6 +30,9 @@ public class TweetPlayer {
 	private SegmentedEnvelope tweetFreqEnvDat;
 	private VariableRateMonoReader tweetFreqEnv;
 	
+	private SegmentedEnvelope panEnvDat;
+	private VariableRateMonoReader panEnv;
+
 	
 	/**
 	 * Initialize tweet player, start main synthesizer, add line out.
@@ -42,22 +44,24 @@ public class TweetPlayer {
 		synth.add( lineOut = new LineOut() );
 	}
 	
-	
-	public void playTweet(Tweet t){
+	// remove this
+	public void playTweet(Tweet t, int x, int y){
 		Note [] tweet = t.toArray( new Note [0]);
 		synth.add( tweetSynth = new TweetSynth() );
 		
-		double [] tweetFreqDat = new double[(4 * tweet.length) + 2]; 
+		double [] tweetFreqDat = new double[4 * (tweet.length+1)]; 
 		
 		// Translate tweet
 		for (int i =0 ,j = 0; i < tweet.length * 4; i += 4, j++){
 			tweetFreqDat[i] = 0.0 ;
-			tweetFreqDat[i+1] = BASE * (Math.pow(SEMITONE, tweet[j].semi));
+			tweetFreqDat[i+1] = Note.BASE * (Math.pow(Note.SEMITONE, tweet[j].semi));
 			tweetFreqDat[i+2] = Note.DURATION; 
 			tweetFreqDat[i+3] = tweetFreqDat[i+1];
 			System.out.printf("%fhz for %fsecs\n", tweetFreqDat[i+1], tweetFreqDat[i+2]);}
 		// end it son
-		tweetFreqDat[tweetFreqDat.length - 2] = 0;
+		tweetFreqDat[tweetFreqDat.length - 4] = 0;
+		tweetFreqDat[tweetFreqDat.length - 3] = 0;
+		tweetFreqDat[tweetFreqDat.length - 2] = Note.DURATION * tweet.length;
 		tweetFreqDat[tweetFreqDat.length - 1] = 0;
 		
 		synth.add( tweetFreqEnv = new VariableRateMonoReader() );
@@ -67,10 +71,18 @@ public class TweetPlayer {
 		tweetFreqEnvDat = new SegmentedEnvelope(tweetFreqDat);
 		
 		//Start playing tweet
-		tweetFreqEnv.dataQueue.queue(tweetFreqEnvDat, 0, tweetFreqEnvDat.getNumFrames());
+		tweetFreqEnv.dataQueue.queueLoop(tweetFreqEnvDat, 0, tweetFreqEnvDat.getNumFrames());
 		
-		tweetSynth.output.connect(0, lineOut.input, 0);
-		tweetSynth.output.connect(0, lineOut.input, 1);
+		double [] panDat = { 0, x } ; 
+		synth.add( panEnv = new VariableRateMonoReader() );
+		panEnv.output.connect(tweetSynth.pan);
+		panEnvDat = new SegmentedEnvelope(panDat);
+		panEnv.dataQueue.queue(panEnvDat, 0, panEnvDat.getNumFrames());
+		
+		
+		
+		tweetSynth.output.connect(0, lineOut.input, 0 );
+		tweetSynth.output.connect(1, lineOut.input, 1 );
 		
 		lineOut.start();
 		
@@ -113,9 +125,10 @@ public class TweetPlayer {
 		ampEnv.output.connect( tweetSynth.amplitude );
 		
 		ampEnv.dataQueue.queue(ampEnvDat, 0, ampEnvDat.getNumFrames());
+	
 		
 		tweetSynth.output.connect(0, lineOut.input, 0);
-		tweetSynth.output.connect(0, lineOut.input, 1);
+		tweetSynth.output.connect(1, lineOut.input, 1);
 		
 		lineOut.start();
 		

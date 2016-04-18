@@ -21,6 +21,7 @@ public class TitleState extends BasicGameState {
 	private AngelCodeFont font;
 	private StateBasedGame game;
 	private Image startImage;
+	private Image bgImage;
 	private MouseOverArea startArea;
 	
 
@@ -28,7 +29,8 @@ public class TitleState extends BasicGameState {
 	public void init(GameContainer container, StateBasedGame game) throws SlickException {
 		this.game = game;
 		font = new AngelCodeFont("fonts/demo2.fnt","fonts/demo2_00.tga");
-		startImage = new Image("res/start.jpg");
+		startImage = new Image("res/Play.png");
+		bgImage = new Image("res/background.png");
 		startArea = new MouseOverArea(container, startImage, 200, 200);
 	}
 
@@ -38,7 +40,9 @@ public class TitleState extends BasicGameState {
 			this.init(container,game);
 			return;
 		}
+		graphics.drawImage(bgImage,0,0);
 		graphics.setFont(font);
+		font.drawString(200, 50, "Tweeter", Color.white);
 		graphics.setColor(Color.white);
 		startImage.draw(200,200);
 		
