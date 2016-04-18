@@ -70,8 +70,7 @@ public class TweeterState extends BasicGameState {
 		timePassed = 0;
 		testBirds = new ArrayList<BirdComputer>();
 		birdsToAdd = new ArrayList<BirdComputer>();
-		tweetPlyr = new GlobalTweetPlayer( testBirds );
-
+		
 	}
 	
 	private void createMap(){
@@ -81,6 +80,7 @@ public class TweeterState extends BasicGameState {
 		this.npcBirdCount = Integer.parseInt(NewGameSettingsState.npcText);
 		this.birdEnergyLimit = Integer.parseInt(NewGameSettingsState.birdEnergyText);
 		map = new Map(mapSizeX,mapSizeY);
+		tweetPlyr = new GlobalTweetPlayer();
 		
 		
 		for (int k = 0; k < mapSizeX; k++){
@@ -101,8 +101,11 @@ public class TweeterState extends BasicGameState {
 			BirdComputer b = new BirdComputer(random.nextInt(mapSizeX), random.nextInt(mapSizeY));
 			testBirds.add(b);
 			map.addBird(b);
+			tweetPlyr.add( b.id );
+
 			//tweetQueue.addTweet(b.tweet, b.getPosX(), b.getPosY(), b);
 		}
+		
 	
 	}
 
@@ -136,7 +139,6 @@ public class TweeterState extends BasicGameState {
 					graphics.setColor(Color.white);
 				}
 				
-				//TODO real number arithmetic is real
 				graphics.fillRect(j*(width/mapSizeX), k*(height/mapSizeY), (width/mapSizeX), (height/mapSizeY));
 				
 			}
@@ -172,15 +174,6 @@ public class TweeterState extends BasicGameState {
 	@Override
 	public void update(GameContainer container, StateBasedGame game, int delta) throws SlickException {
 			
-			// TODO find out how to resize window
-			/*/  Make sure tiles fit in window
-			//  window_width - (window_width mod size_of_board)
-			//  
-			newWidth = this.width % mapSizeX ;  
-			newHeight = this.height % mapSizeY ;
-			
-			
-			assert width==height : "Window Width does not match Height";*/
 		for (iter = testBirds.iterator(); iter.hasNext(); ) {
 			BirdComputer b = iter.next();
 			
@@ -210,12 +203,10 @@ public class TweeterState extends BasicGameState {
 				
 				if (b.getStateTime() > 2000) {
 					b.setStateTime(0);
-				
-					// TODO Nick put the sound playing here 
-				
-					tweetQueue.addTweet(b.tweet, b.getPosX(), b.getPosY(), b);
 					
-					b.moveRandom(map);
+					b.tweet(tweetPlyr, tweetQueue, map.sizeX, userBird.posX);
+					
+					//b.moveRandom(map);
 					
 //					Bird partner = b.moveRandom(map);
 //					if(partner != null) {
@@ -405,7 +396,9 @@ public class TweeterState extends BasicGameState {
 				for(int i=0; i<cs.length; i++){
 					cs[i] = notesToAdd.get(i);
 				}
+				notesToAdd.clear();
 				userBird.setTweet(new Tweet(cs));
+				userBird.tweet(tweetPlyr,tweetQueue, map.sizeX, userBird.posX);
 				break;
 				
 			}

@@ -3,6 +3,7 @@ package com.tweeter.app;
 
 import com.jsyn.data.Function;
 import com.jsyn.data.SegmentedEnvelope;
+import com.jsyn.ports.UnitInputPort;
 import com.jsyn.ports.UnitOutputPort;
 import com.jsyn.unitgen.*;
 
@@ -38,6 +39,7 @@ public class TweetSynth extends Circuit{
 	//Envelopes for playing
 	private VariableRateMonoReader tweetFreqEnv;	
 	private VariableRateMonoReader panEnv;
+	private VariableRateMonoReader ampEnv;
 
 	// Amplitude Envelope Players
 	private VariableRateMonoReader[] ampEnvs = new VariableRateMonoReader[NUMUNITS];
@@ -74,6 +76,10 @@ public class TweetSynth extends Circuit{
 
 		// Now set up flow of output 
 		addPort( output = panUnit.output );
+		add( ampEnv = new VariableRateMonoReader() );
+		
+		ampEnv.output.connect( dividerUnit.amplitude );
+		
 		dividerUnit.outputMono.connect( panUnit.input );
 
 		
@@ -107,11 +113,13 @@ public class TweetSynth extends Circuit{
 	 * 
 	 * @param tweet
 	 */
-	public void queueTweet(Tweet tweet, double xposition){
+	public void queueTweet(Tweet tweet, double xposition, double bposition){
 			Note [] tweetArr = tweet.toArray( new Note [0]);
 			
 			// set envelope data for pan and frequency
 			double [] panDat = { 0, xposition } ; 
+			double [] ampDat = { 0, bposition } ;
+			
 			double [] tweetFreqDat = new double[4 * (tweetArr.length+1)]; 
 			
 			// Translate tweet
@@ -131,6 +139,8 @@ public class TweetSynth extends Circuit{
 			
 			tweetFreqEnv.dataQueue.queue( new SegmentedEnvelope(tweetFreqDat) );
 			panEnv.dataQueue.queue( new SegmentedEnvelope(panDat) );
+			ampEnv.dataQueue.queue( new SegmentedEnvelope(ampDat) );
+
 	}
 
 }

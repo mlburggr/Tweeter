@@ -66,7 +66,7 @@ public class Tweet extends LinkedList<Note>{
 
 		// to arrays
 		final Note [] h = heard.toArray(new Note[0]);
-		final Note [] t = heard.toArray(new Note[0]);
+		final Note [] t = tweeted.toArray(new Note[0]);
 
 
 		// create two work vectors of integer distances
@@ -91,16 +91,19 @@ public class Tweet extends LinkedList<Note>{
 			for (int j = 0; j < tsize; j++)
 			{
 				int cost = Note.getInterval(h[i], t[j]);
+				
 				v1[j + 1] = Math.min(v1[j] + h[i].ordinal(), 
-						Math.min(v0[j + 1] + t[j].ordinal(), v0[j] + cost) );
+						Math.min(v0[j + 1] + t[j].ordinal(),
+								v0[j] + cost) );
 			}
 
 			// copy v1 (current row) to v0 (previous row) for next iteration
 			for (int j = 0; j < v0.length; j++)
 				v0[j] = v1[j];
 		}
+		System.out.println(v1[tsize]);
 		double diff = Math.log(v1[tsize]/(2*(Note.SUM * hsize)));
-		System.out.printf("Difference: %f", diff);
+		System.out.printf("Difference: %f\n", diff);
 		return diff;
 	}
 	
@@ -118,7 +121,7 @@ public class Tweet extends LinkedList<Note>{
 		GlobalTweetPlayer testplyr = new GlobalTweetPlayer();
 		BirdComputer testBird = new BirdComputer(5,0);
 		testplyr.add( testBird.getId() );
-		testBird.tweet(testplyr, new TweetQueue(1), 30);
+		testBird.tweet(testplyr, new TweetQueue(1), 30, 5);
 		
 		try {
 			Thread.sleep( (long) (testBird.tweet.size() * Note.DURATION_SUM * 1000) );

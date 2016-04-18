@@ -30,7 +30,8 @@ public class UnitDivider extends Circuit {
 		add( sigPassThru = new PassThrough() );
 				
 		addPort( inputMono = sigPassThru.input );
-				
+		addPort( amplitude = dividerGenMono.amplitude);
+		
 		sigPassThru.output.connect(0, dividerGenMono.input, 0 );		
 		addPort( outputMono = dividerGenMono.output );
 		

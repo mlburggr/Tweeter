@@ -11,7 +11,7 @@ public class BirdComputer extends Bird{
 	
 	public BirdComputer(int origX, int origY){
 		super(origX, origY);
-		Random random = new Random(42);
+		Random random = new Random();
 		
 		//Add random length tweet
 		int length = (Math.abs(random.nextInt()) % (TWEET_MAXLENGTH-1)) +1;
