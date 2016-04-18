@@ -149,6 +149,10 @@ public abstract class Bird {
 				if (!c.hasBird()) {
 						BirdComputer child = new BirdComputer(x,y, this, partner); 
 						map.addBird(child);
+						
+						this.mood = BirdMood.NEUTRAL;
+						partner.mood = BirdMood.NEUTRAL;
+						
 						break;
 				}
 			}
