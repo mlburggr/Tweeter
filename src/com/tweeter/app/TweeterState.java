@@ -161,9 +161,9 @@ public class TweeterState extends BasicGameState {
 		
 		if(gameMode == 2) { //Composition Mode overlay
 			graphics.setColor(Color.gray);
-			graphics.fillRect(100, 100, 300, 150);
+			graphics.fillRect(400, 450, 300, 150);
 			if(noteToDraw != null){
-				font.drawString(150, 150, noteToDraw);
+				font.drawString(400, 450, noteToDraw);
 			}
 		}
 		graphics.setColor(Color.black);
