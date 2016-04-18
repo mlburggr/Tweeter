@@ -1,5 +1,6 @@
 package com.tweeter.app;
 
+import java.util.ArrayList;
 import java.util.Random;
 
 public abstract class Bird {
@@ -15,6 +16,7 @@ public abstract class Bird {
 	protected BirdState state;
 	protected BirdMood mood;
 	protected int stateTime;
+	protected ArrayList<Bird> doNotMateWith;
 	public final int DAMAGE = 10;
 
 	public Bird(int origX, int origY){
@@ -25,6 +27,7 @@ public abstract class Bird {
 		this.state = BirdState.DEFAULT;
 		this.stateTime = 0;
 		this.mood = BirdMood.NEUTRAL;
+		this.doNotMateWith = new ArrayList<Bird>();
 	}
 	
 	public void tweet(GlobalTweetPlayer tweetplyr, TweetQueue tweetQueue, int mapSizeX, int userBirdX, double delay){
@@ -114,6 +117,10 @@ public abstract class Bird {
 	}
 	
 	public void mate(Bird partner, Map map) {
+		if(this.doNotMateWith.contains(partner)){
+			return;
+		}
+		System.out.println("Mate!");
 		int xMin, yMin, xMax, yMax;
 		if (this.getPosX() - 1 > 0) xMin = this.getPosX() - 1; else xMin = 0;
 		if (this.getPosY() - 1 > 0) yMin = this.getPosY() - 1; else yMin = 0;
@@ -130,7 +137,8 @@ public abstract class Bird {
 						
 						this.mood = BirdMood.NEUTRAL;
 						partner.mood = BirdMood.NEUTRAL;
-						
+						this.doNotMateWith.add(child);
+						this.doNotMateWith.add(partner);
 						break;
 				}
 			}

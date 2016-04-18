@@ -236,7 +236,7 @@ public class Map {
 		removeBird(origX, origY);
 		
 		//////////////////////////////////////////////////////////////////////////////
-		Cell[] adjacents = grid[origX+1][origY-1].neighbours;
+		Cell[] adjacents = grid[origX+1][origY].neighbours;
 		if(adjacents != null){
 		for (Cell c : adjacents) {
 			if (c!=null) {
