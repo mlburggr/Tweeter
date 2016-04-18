@@ -18,6 +18,7 @@ public abstract class Bird {
 	protected BirdState state;
 	protected BirdMood mood;
 	protected int stateTime;
+	public final int DAMAGE = 10;
 
 	public Bird(int origX, int origY){
 		Random r = new Random(42);
@@ -158,6 +159,21 @@ public abstract class Bird {
 			}
 		} // end of nested for loop that spawns bird
 		
+	}
+	
+	public void attack(Bird enemy, Map map) {
+		this.health -= DAMAGE;
+		enemy.health -= DAMAGE;
+		this.mood = BirdMood.NEUTRAL;
+		enemy.mood = BirdMood.NEUTRAL;
+		
+		if (!this.isUserBird()) {
+			((BirdComputer)this).moveAwayCoord(map, enemy.posX, enemy.posY);
+		}
+		
+		if (!enemy.isUserBird()) {
+			((BirdComputer)enemy).moveAwayCoord(map, this.posX, this.posY);
+		}
 	}
 	
 }
