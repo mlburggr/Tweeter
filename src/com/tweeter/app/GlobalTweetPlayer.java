@@ -48,7 +48,6 @@ public class GlobalTweetPlayer {
 	 */
 	public GlobalTweetPlayer() {
 		synth = JSyn.createSynthesizer();
-		synth.stop();
 		synth.start();
 		synth.add( lineOut = new LineOut() );
 		synth.add( divider = new UnitDividerStereo() );

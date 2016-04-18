@@ -7,7 +7,7 @@ public class BirdComputer extends Bird{
 	/**
 	 * Maximum length of a computer bird's random tweet.
 	 */
-	private static int TWEET_MAXLENGTH = 8;
+	public static int TWEET_MAXLENGTH = 4;
 	
 	public BirdComputer(int origX, int origY){
 		super(origX, origY);
@@ -29,8 +29,9 @@ public class BirdComputer extends Bird{
 		super(origX, origY);
 		this.health = 100;
 		this.energy = 100;
+		Random random = new Random();
 		
-		this.tweet = dad.tweet; // TODO make new combined tweet for child bird
+		this.tweet = new Tweet(dad.tweet, mom.tweet); 
 		this.state = BirdState.NEWBORN;
 		TweeterState.tweetQueue.addTweet(this.tweet, this.getPosX(), this.getPosY(), this);
 		TweeterState.birdsToAdd.add(this);
