@@ -104,14 +104,25 @@ public class BirdComputer extends Bird{
 	public void moveToCoord(Map map, int x, int y) {
 		int distX = Math.abs(this.getPosX() - x);
 		int distY = Math.abs(this.getPosY() - y);
-		if (distX >= distY) {
+		if (distX > distY) {
 			if (distX>1) {
 				if (x > this.getPosX()) { map.moveRight(this, this.getPosX(), this.getPosY()); }
 				else { map.moveLeft(this, this.getPosX(), this.getPosY()); }
 			}
 		}
-		else {
+		else if (distX < distY) {
 			if (distY>1) {
+				if (y > this.getPosY()) { map.moveDown(this, this.getPosX(), this.getPosY()); }
+				else { map.moveUp(this, this.getPosX(), this.getPosY()); }
+			}
+		}
+		else {
+			Random random = new Random();
+			int guess = random.nextInt(2);
+			if (guess==0) {
+				if (x > this.getPosX()) { map.moveRight(this, this.getPosX(), this.getPosY()); }
+				else { map.moveLeft(this, this.getPosX(), this.getPosY()); }
+			} else {
 				if (y > this.getPosY()) { map.moveDown(this, this.getPosX(), this.getPosY()); }
 				else { map.moveUp(this, this.getPosX(), this.getPosY()); }
 			}
@@ -121,17 +132,29 @@ public class BirdComputer extends Bird{
 	public void moveAwayCoord(Map map, int x, int y) {
 		int distX = Math.abs(this.getPosX() - x);
 		int distY = Math.abs(this.getPosY() - y);
-		if (distX >= distY) {
+		if (distX > distY) {
 			if (distX>1) {
 				if (x > this.getPosX()) { map.moveLeft(this, this.getPosX(), this.getPosY()); }
 				else { map.moveRight(this, this.getPosX(), this.getPosY()); }
 			}
 		}
-		else {
+		else if (distX < distY) {
 			if (distY>1) {
 				if (y > this.getPosY()) { map.moveUp(this, this.getPosX(), this.getPosY()); }
 				else { map.moveDown(this, this.getPosX(), this.getPosY()); }
 			}
 		}
+		else {
+			Random random = new Random();
+			int guess = random.nextInt(2);
+			if (guess==0) {
+				if (x > this.getPosX()) { map.moveLeft(this, this.getPosX(), this.getPosY()); }
+				else { map.moveRight(this, this.getPosX(), this.getPosY()); }
+			} else {
+				if (y > this.getPosY()) { map.moveUp(this, this.getPosX(), this.getPosY()); }
+				else { map.moveDown(this, this.getPosX(), this.getPosY()); }
+			}
+		}
 	}
+	
 }
