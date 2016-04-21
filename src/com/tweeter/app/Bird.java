@@ -1,26 +1,43 @@
 package com.tweeter.app;
 
-public class Bird {
-	private int health;
-	private int energy;
-	private int id;
-	private Tweet tweet;
-	private int mode;
-	private int posX;
-	private int posY;
-	private Bird movingTowards;
+import java.util.ArrayList;
+import java.util.Random;
+
+public abstract class Bird {
 	
+	protected int health;
+	protected int energy;
+	protected final int id;
+	protected Tweet tweet;
+	protected int mode; 	// private to protected for abstraction
+	protected int posX;
+	protected int posY;
+	protected Bird movingTowards;	// private to protected for abstraction
+	protected BirdState state;
+	protected BirdMood mood;
+	protected int stateTime;
+	protected ArrayList<Bird> doNotMateWith;
+	public final int DAMAGE = 10;
+
 	public Bird(int origX, int origY){
+		Random r = new Random();
+		this.id = r.nextInt();
 		this.posX = origX;
 		this.posY = origY;
+		this.state = BirdState.DEFAULT;
+		this.stateTime = 0;
+		this.mood = BirdMood.NEUTRAL;
+		this.doNotMateWith = new ArrayList<Bird>();
 	}
 	
-	public Bird(int origX, int origY, boolean userBird){
-		this.posX = origX;
-		this.posY = origY;
-		if(userBird){
-			this.mode = 2;
-		}
+	public void tweet(GlobalTweetPlayer tweetplyr, TweetQueue tweetQueue, int mapSizeX, int userBirdX, double delay){
+		double xposition = (2.0 * posX / (double) mapSizeX) - 1.0;
+		double bposition = 1 - (Math.abs(posX - userBirdX) / mapSizeX) ;
+		System.out.println(xposition);
+		tweetplyr.getTweetSynth(this.id).queueTweet(tweet, xposition, bposition, delay);		
+		tweetQueue.addTweet(tweet, this.posX, this.posY, this);
+		
+		System.out.println("Reached!");	
 	}
 	
 	public int getHealth(){
@@ -63,10 +80,6 @@ public class Bird {
 		this.energy = e;
 	}
 	
-	public void setId(int i){
-		this.id = i;
-	}
-	
 	public void setPosX(int x){
 		this.posX = x;
 	}
@@ -83,12 +96,79 @@ public class Bird {
 		this.tweet = t;
 	}
 	
-	public void setMovingTowards(Bird b){
-		this.movingTowards = b; 
+	abstract void setMovingTowards(Bird b);
+	
+	abstract boolean isUserBird();
+
+	public BirdState getBirdState() {
+		return state;
+	}
+
+	public void setBirdState(BirdState state) {
+		this.state = state;
+	}
+
+	public int getStateTime() {
+		return stateTime;
+	}
+
+	public void setStateTime(int stateTime) {
+		this.stateTime = stateTime;
 	}
 	
-	public boolean isUserBird(){
-		return mode == 2;
+	public void mate(Bird partner, Map map) {
+		if(this.doNotMateWith.contains(partner)){
+			return;
+		}
+		System.out.println("Mate!");
+		int xMin, yMin, xMax, yMax;
+		if (this.getPosX() - 1 > 0) xMin = this.getPosX() - 1; else xMin = 0;
+		if (this.getPosY() - 1 > 0) yMin = this.getPosY() - 1; else yMin = 0;
+		if (this.getPosX() + 1 >= map.sizeX) xMax = this.getPosX() - 1; else xMax = map.sizeX-1;
+		if (this.getPosY() + 1 >= map.sizeY) yMax = this.getPosY() - 1; else yMax = map.sizeY-1;
+		
+		for (int x = xMin; x <= xMax; x++) {
+			for (int y = yMin; y <= yMax; y++) {
+				Cell c = map.getCellAt(x, y);
+				if (!c.hasBird()) {
+						BirdComputer child = new BirdComputer(x,y, this, partner); 
+						map.addBird(child);
+						TweeterState.tweetPlyr.add(child.id);
+						
+						this.mood = BirdMood.NEUTRAL;
+						partner.mood = BirdMood.NEUTRAL;
+						this.doNotMateWith.add(child);
+						this.doNotMateWith.add(partner);
+						break;
+				}
+			}
+		} // end of nested for loop that spawns bird
+		
+	}
+	
+	public void attack(Bird enemy, Map map) {
+		this.health -= DAMAGE;
+		enemy.health -= DAMAGE;
+		
+		// check if this bird dies
+		if (this.health <= 0) {
+			map.removeBird(this.posX, this.posY);
+			if (!this.isUserBird()) { TweeterState.birdsToRemove.add((BirdComputer) this); }
+		}
+		else {
+			this.mood = BirdMood.NEUTRAL;
+			if (!this.isUserBird()) { ((BirdComputer)this).moveAwayCoord(map, enemy.posX, enemy.posY); }
+		}
+		
+		// check if enemy bird dies
+		if (enemy.health <= 0) {
+			map.removeBird(enemy.posX, enemy.posY);
+			if (!enemy.isUserBird()) { TweeterState.birdsToRemove.add((BirdComputer) enemy); }
+		}
+		else {
+			enemy.mood = BirdMood.NEUTRAL;
+			if (!enemy.isUserBird()) { ((BirdComputer)enemy).moveAwayCoord(map, this.posX, this.posY); }
+		}
 	}
 	
 }

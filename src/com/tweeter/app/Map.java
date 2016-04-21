@@ -4,8 +4,13 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class Map {
-	private int sizeX;
-	private int sizeY;
+	public int sizeX;
+	public int getSizeX() {
+		return sizeX;
+	}
+
+	public int sizeY;
+
 	private Cell[][] grid;
 	
 	public Map(int sX, int sY){
@@ -68,6 +73,18 @@ public class Map {
 			return;
 		}
 		if(grid[origX][origY-1].hasBird()){
+			
+			// bird wants to go to the same spot
+			// thus, they mate and make new bird
+			Bird partner = grid[origX][origY-1].getBird();
+			if (b.mood == BirdMood.MATE && partner.mood == BirdMood.MATE) {
+				b.mate(partner,this);
+			}
+			
+			else if (b.mood == BirdMood.ATTACK && partner.mood == BirdMood.ATTACK) {
+				b.attack(partner,this);
+			}
+			
 			return;
 		}
 		Cell cNew = new Cell(origX,origY);
@@ -75,6 +92,48 @@ public class Map {
 		b.setPosY(origY-1);
 		addBird(b);
 		removeBird(origX, origY);
+		
+		//////////////////////////////////////////////////////////////////////////////
+		Cell[] adjacents = grid[origX][origY-1].neighbours;
+		int numAdj = 0; 
+		if(adjacents != null){
+			for(Cell c : adjacents){
+				if(c!=null){
+					if(c.hasBird()){
+						numAdj++;
+					}
+				}
+			}
+		}
+		if (numAdj<3){
+		if(adjacents != null){
+			findBirdLoop:
+				for (Cell c : adjacents) {
+					if (c!=null) {
+						if (c.hasBird()) {
+							Bird adj = c.getBird();
+							if (b.mood == BirdMood.MATE && adj.mood == BirdMood.MATE) {
+								b.mate(adj,this);
+								break findBirdLoop;
+							}
+						
+							else if (b.mood == BirdMood.ATTACK && adj.mood == BirdMood.ATTACK) {
+								b.attack(adj,this);
+								break findBirdLoop;
+							}
+						}
+					}
+				}
+		} else {
+			setNeighbors();
+		
+		}
+		}
+		else {
+			removeBird(origX,origY-1);
+		}
+		///////////////////////////////////////////////////////////////////////////////
+		
 	}
 	
 	public void moveDown(Bird b, int origX, int origY){
@@ -82,6 +141,15 @@ public class Map {
 			return;
 		}
 		if(grid[origX][origY+1].hasBird()){
+			Bird partner = grid[origX][origY+1].getBird();
+			if (b.mood == BirdMood.MATE && partner.mood == BirdMood.MATE) {
+				b.mate(partner,this);
+			}
+			
+			else if (b.mood == BirdMood.ATTACK && partner.mood == BirdMood.ATTACK) {
+				b.attack(partner,this);
+			}
+			
 			return;
 		}
 		Cell cNew = new Cell(origX,origY);
@@ -89,6 +157,48 @@ public class Map {
 		b.setPosY(origY+1);
 		addBird(b);
 		removeBird(origX, origY);
+		
+		//////////////////////////////////////////////////////////////////////////////
+		Cell[] adjacents = grid[origX][origY+1].neighbours;
+		int numAdj = 0; 
+		if(adjacents != null){
+			for(Cell c : adjacents){
+				if(c!=null){
+					if(c.hasBird()){
+						numAdj++;
+					}
+				}
+			}
+		}
+		if (numAdj<3){
+		if(adjacents != null){
+			findBirdLoop:
+				for (Cell c : adjacents) {
+					if (c!=null) {
+						if (c.hasBird()) {
+							Bird adj = c.getBird();
+							if (b.mood == BirdMood.MATE && adj.mood == BirdMood.MATE) {
+								b.mate(adj,this);
+								break findBirdLoop;
+							}
+						
+							else if (b.mood == BirdMood.ATTACK && adj.mood == BirdMood.ATTACK) {
+								b.attack(adj,this);
+								break findBirdLoop;
+							}
+						}
+					}
+				}
+		} else {
+			setNeighbors();
+		
+		}
+		}
+		else {
+			removeBird(origX,origY+1);
+		}
+		///////////////////////////////////////////////////////////////////////////////
+		
 	}
 	
 	public void moveLeft(Bird b, int origX, int origY){
@@ -96,6 +206,15 @@ public class Map {
 			return;
 		}
 		if(grid[origX-1][origY].hasBird()){
+			Bird partner = grid[origX-1][origY].getBird();
+			if (b.mood == BirdMood.MATE && partner.mood == BirdMood.MATE) {
+				b.mate(partner,this);
+			}
+			
+			else if (b.mood == BirdMood.ATTACK && partner.mood == BirdMood.ATTACK) {
+				b.attack(partner,this);
+			}
+			
 			return;
 		}
 		Cell cNew = new Cell(origX,origY);
@@ -103,6 +222,48 @@ public class Map {
 		b.setPosX(origX-1);
 		addBird(b);
 		removeBird(origX, origY);
+		
+		//////////////////////////////////////////////////////////////////////////////
+		Cell[] adjacents = grid[origX-1][origY].neighbours;
+		int numAdj = 0; 
+		if(adjacents != null){
+			for(Cell c : adjacents){
+				if(c!=null){
+					if(c.hasBird()){
+						numAdj++;
+					}
+				}
+			}
+		}
+		if (numAdj<3){
+		if(adjacents != null){
+			findBirdLoop:
+				for (Cell c : adjacents) {
+					if (c!=null) {
+						if (c.hasBird()) {
+							Bird adj = c.getBird();
+							if (b.mood == BirdMood.MATE && adj.mood == BirdMood.MATE) {
+								b.mate(adj,this);
+								break findBirdLoop;
+							}
+						
+							else if (b.mood == BirdMood.ATTACK && adj.mood == BirdMood.ATTACK) {
+								b.attack(adj,this);
+								break findBirdLoop;
+							}
+						}
+					}
+				}
+		} else {
+			setNeighbors();
+		
+		}
+		}
+		else {
+			removeBird(origX-1,origY);
+		}
+		///////////////////////////////////////////////////////////////////////////////
+		
 	}
 	
 	public void moveRight(Bird b, int origX, int origY){
@@ -110,6 +271,15 @@ public class Map {
 			return;
 		}
 		if(grid[origX+1][origY].hasBird()){
+			Bird partner = grid[origX+1][origY].getBird();
+			if (b.mood == BirdMood.MATE && partner.mood == BirdMood.MATE) {
+				b.mate(partner,this);
+			}
+			
+			else if (b.mood == BirdMood.ATTACK && partner.mood == BirdMood.ATTACK) {
+				b.attack(partner,this);
+			}
+			
 			return;
 		}
 		
@@ -119,6 +289,47 @@ public class Map {
 		addBird(b);
 		removeBird(origX, origY);
 		
-		System.out.println(cellHasBird(origX,origY) + " " + cellHasBird(origX+1,origY));
+		//////////////////////////////////////////////////////////////////////////////
+		Cell[] adjacents = grid[origX+1][origY].neighbours;
+		int numAdj = 0; 
+		if(adjacents != null){
+			for(Cell c : adjacents){
+				if(c!=null){
+					if(c.hasBird()){
+						numAdj++;
+					}
+				}
+			}
+		}
+		if (numAdj<3){
+		if(adjacents != null){
+			findBirdLoop:
+				for (Cell c : adjacents) {
+					if (c!=null) {
+						if (c.hasBird()) {
+							Bird adj = c.getBird();
+							if (b.mood == BirdMood.MATE && adj.mood == BirdMood.MATE) {
+								b.mate(adj,this);
+								break findBirdLoop;
+							}
+						
+							else if (b.mood == BirdMood.ATTACK && adj.mood == BirdMood.ATTACK) {
+								b.attack(adj,this);
+								break findBirdLoop;
+							}
+						}
+					}
+				}
+		} else {
+			setNeighbors();
+		
+		}
+		}
+		else {
+			removeBird(origX+1,origY);
+		}
+		///////////////////////////////////////////////////////////////////////////////
+		
+		//System.out.println(cellHasBird(origX,origY) + " " + cellHasBird(origX+1,origY));
 	}
 }
