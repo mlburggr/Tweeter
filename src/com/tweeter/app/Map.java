@@ -95,17 +95,6 @@ public class Map {
 		
 		//////////////////////////////////////////////////////////////////////////////
 		Cell[] adjacents = grid[origX][origY-1].neighbours;
-		int numAdj = 0; 
-		if(adjacents != null){
-			for(Cell c : adjacents){
-				if(c!=null){
-					if(c.hasBird()){
-						numAdj++;
-					}
-				}
-			}
-		}
-		if (numAdj<3){
 		if(adjacents != null){
 			findBirdLoop:
 				for (Cell c : adjacents) {
@@ -127,10 +116,6 @@ public class Map {
 		} else {
 			setNeighbors();
 		
-		}
-		}
-		else {
-			removeBird(origX,origY-1);
 		}
 		///////////////////////////////////////////////////////////////////////////////
 		
@@ -160,17 +145,6 @@ public class Map {
 		
 		//////////////////////////////////////////////////////////////////////////////
 		Cell[] adjacents = grid[origX][origY+1].neighbours;
-		int numAdj = 0; 
-		if(adjacents != null){
-			for(Cell c : adjacents){
-				if(c!=null){
-					if(c.hasBird()){
-						numAdj++;
-					}
-				}
-			}
-		}
-		if (numAdj<3){
 		if(adjacents != null){
 			findBirdLoop:
 				for (Cell c : adjacents) {
@@ -192,10 +166,6 @@ public class Map {
 		} else {
 			setNeighbors();
 		
-		}
-		}
-		else {
-			removeBird(origX,origY+1);
 		}
 		///////////////////////////////////////////////////////////////////////////////
 		
@@ -225,17 +195,6 @@ public class Map {
 		
 		//////////////////////////////////////////////////////////////////////////////
 		Cell[] adjacents = grid[origX-1][origY].neighbours;
-		int numAdj = 0; 
-		if(adjacents != null){
-			for(Cell c : adjacents){
-				if(c!=null){
-					if(c.hasBird()){
-						numAdj++;
-					}
-				}
-			}
-		}
-		if (numAdj<3){
 		if(adjacents != null){
 			findBirdLoop:
 				for (Cell c : adjacents) {
@@ -257,10 +216,6 @@ public class Map {
 		} else {
 			setNeighbors();
 		
-		}
-		}
-		else {
-			removeBird(origX-1,origY);
 		}
 		///////////////////////////////////////////////////////////////////////////////
 		
@@ -291,17 +246,6 @@ public class Map {
 		
 		//////////////////////////////////////////////////////////////////////////////
 		Cell[] adjacents = grid[origX+1][origY].neighbours;
-		int numAdj = 0; 
-		if(adjacents != null){
-			for(Cell c : adjacents){
-				if(c!=null){
-					if(c.hasBird()){
-						numAdj++;
-					}
-				}
-			}
-		}
-		if (numAdj<3){
 		if(adjacents != null){
 			findBirdLoop:
 				for (Cell c : adjacents) {
@@ -323,10 +267,6 @@ public class Map {
 		} else {
 			setNeighbors();
 		
-		}
-		}
-		else {
-			removeBird(origX+1,origY);
 		}
 		///////////////////////////////////////////////////////////////////////////////
 		
