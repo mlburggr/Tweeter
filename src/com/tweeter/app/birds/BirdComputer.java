@@ -89,8 +89,11 @@ public class BirdComputer extends Bird implements Runnable{
 	 * @param dad : parent bird (The one that called "Mate"; excuse the biological sexism)
 	 * @param mom : parent bird
 	 */
-	public BirdComputer(int origX, int origY, Bird dad, Bird mom){
+	public BirdComputer(int origX, int origY, Bird dad, Bird mom, Object energyLock, Object moveLock){
 		super(origX, origY);
+		this.energyLock = energyLock;
+		this.moveLock = moveLock;
+		
 		this.tweet = new Tweet(dad.tweet, mom.tweet);
 		this.actionStack = new Stack<CallArg>();
 		
@@ -248,11 +251,13 @@ public class BirdComputer extends Bird implements Runnable{
 		double affinity = Tweet.compare(tweet, tweetedNode.tweet);
 		
 		if (affinity > MATE_CUTOFF){
+			this.tweet.learn(tweetedNode.tweet);
 			this.setMood(BirdMood.MATE);
+			
 			actionStack.push( DO_LISTEN );
 			actionStack.push( DO_MATE );
-			actionStack.push( DO_MOVEAWAY.XY(tweetedNode.x0, tweetedNode.y0) );
-			actionStack.push( DO_MOVEAWAY.XY(tweetedNode.x0, tweetedNode.y0) );
+			actionStack.push( DO_MOVETOWARD.XY(tweetedNode.x0, tweetedNode.y0) );
+			actionStack.push( DO_MOVETOWARD.XY(tweetedNode.x0, tweetedNode.y0) );
 			
 		} else if (affinity > ATTACK_CUTOFF) {
 			this.setMood(BirdMood.NEUTRAL);
@@ -272,15 +277,50 @@ public class BirdComputer extends Bird implements Runnable{
 	}
 	
 	/**
-	 * TODO mate method
+	 * Bird looks at all adjacent squares in random order and 
+	 * if there is a bird in mate mode it mates, otherwise it doesn't.
+	 * 
+	 * This method replaces the calling bird if the bird is surrounded.
 	 */
 	public void mate() {
-		/*
-		BirdComputer child = new BirdComputer(x,y, this, partner); 
-		map.addBird(child);		
-		this.mood = BirdMood.NEUTRAL;
-		partner.mood = BirdMood.NEUTRAL;
-		break; */
+		int firstChoice = (int) Math.round( Math.random() * 3 );
+		boolean foundBird = false;
+		Bird partner = null;
+		// Find a bird to mate with
+		int checkX = 0;
+		int checkY = 0;
+		for (int i = firstChoice ; i % 4 != firstChoice || foundBird ; i++, i %= 4 ){
+			checkX = (i % 2 == 0 ? this.posX + (i - 1) : this.posX);
+			checkY = (i % 2 == 1 ? this.posY + (i - 1) : this.posY);
+			partner = Global.map.getMateBird(checkX, checkY);
+			foundBird = null != partner;}
+		// Find an empty space to spawn a new bird
+		if (foundBird) {
+			firstChoice = (int) Math.round( Math.random() * 3 );
+			boolean foundSpace = false;
+			int spawnX = 0;
+			int spawnY = 0;
+			for (int i = firstChoice ; i % 4 != firstChoice || foundBird ; i++, i %= 4 ){
+				checkX = (i % 2 == 0 ? this.posX : this.posX);
+				checkY = (i % 2 == 1 ? this.posY + (i - 1) : this.posY);
+				partner = Global.map.getBird(checkX, checkY);
+				foundBird = null == partner;}
+			// Put the bird in the empty space
+			if (foundSpace) {
+				BirdComputer child = new BirdComputer(spawnX, spawnY, this, partner, energyLock, moveLock);
+				Thread thread = new Thread(child);
+				thread.start();
+			// Replace father bird with the child (So the user bird is never replaced)	
+			} else {
+				BirdComputer child = new BirdComputer(this.posX, this.posY, this, partner, energyLock, moveLock);
+				Thread thread = new Thread(child);
+				thread.start();
+			}
+			this.mood = BirdMood.NEUTRAL;
+			partner.mood = BirdMood.NEUTRAL;
+		// No bird to mate with... listen again
+		} else 
+			return;
 	}
 	
 	/**

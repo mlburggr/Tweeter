@@ -149,18 +149,63 @@ public class Map {
 		return true;
 	}
 
+	/**
+	 * Add bird to the grid
+	 *  
+	 * @param b : bird to add
+	 */
 	public void addBird(Bird b){
 		grid[b.getPosX()][b.getPosY()].setBird(b,true);
 	}
 
+	/**
+	 * Remove bird from the grid. (naively! does not check)
+	 * @param locX : x position cleared
+	 * @param locY : y position cleared
+	 */
 	public void removeBird(int locX, int locY){
 		grid[locX][locY].setBird(null,false);
 	}
-
-	public synchronized Cell getCellAt(int locX, int locY){
-		return grid[locX][locY];
+	
+	/**
+	 * get a bird in mate mode at a location
+	 * 
+	 * @param x : x location to be polled
+	 * @param y : y location to be polled
+	 * @return null or a bird in mate mood at the location
+	 */
+	public synchronized Bird getMateBird(int x, int y){
+		Bird bird = getBird(x, y);
+		if (bird == null)
+			return null;
+		else
+			return (bird.getMood() == BirdMood.MATE || 
+				bird.getMood() == BirdMood.PLAYER ? bird : null );
+	}
+	
+	/**
+	 * Get a bird from the grid at location
+	 * @param x : x coordinate
+	 * @param y : y coordinate
+	 * @return
+	 */
+	public synchronized Bird getBird(int x, int y){
+		if (x < sizeX || y < sizeY || x < 0 || y< 0)
+			return null;
+		else {
+			Cell cell = getCellAt(x,y);
+			return (cell.hasBird() ? cell.getBird() : null); }	
 	}
 
-	public synchronized void move(Bird b, int origX, int origY){
+	/**
+	 * Syntax sugar for array access, but 
+	 * thread safe
+	 * 
+	 * @param locX
+	 * @param locY
+	 * @return grid cell
+	 */
+	public synchronized Cell getCellAt(int locX, int locY){
+		return grid[locX][locY];
 	}
 }

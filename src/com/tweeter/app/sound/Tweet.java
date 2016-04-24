@@ -1,13 +1,11 @@
 package com.tweeter.app.sound;
+
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.Random;
 
 import com.tweeter.app.birds.BirdComputer;
-import com.tweeter.app.globals.TweetQueue;
 import com.tweeter.app.sound.Note;
-
-import java.lang.Math.*;
 
 /**
  * 
@@ -67,25 +65,24 @@ public class Tweet extends LinkedList<Note>{
 	
 	/**
 	 * 
-	 * @param listener
-	 * @param tweeter
+	 * @param listen
+	 * @param listen
 	 * @return double value "similarity index" 	
 	 * 					negative -> not similar
 	 * 					positive -> similar
 	 */
-	
-	public static double compare(Tweet heard, Tweet tweeted){
+	public static double compare(Tweet listen, Tweet heard){
 		// LevenshteinDistance from wikipedia
 		final int OMIT_COST = Note.getNote(5).semi;
-		int hsize = heard.size();
-		int tsize = tweeted.size();
+		int hsize = listen.size();
+		int tsize = heard.size();
 
 		if (hsize == 0) return tsize;
 		if (tsize == 0) return hsize;
 
 		// to arrays
-		final Note [] h = heard.toArray(new Note[0]);
-		final Note [] t = tweeted.toArray(new Note[0]);
+		final Note [] h = listen.toArray(new Note[0]);
+		final Note [] t = heard.toArray(new Note[0]);
 
 
 		// create two work vectors of integer distances
@@ -126,15 +123,10 @@ public class Tweet extends LinkedList<Note>{
 		return diff;
 	}
 	
-	public static double compareFAKE() {
-		Random random = new Random();
-		double x = 2 * (random.nextDouble()) - 1;
-		return x;
-	}
-	
 	/**
-	 * TODO this man, this...
-	 * @param tweet
+	 * Changes this bird's tweet to be more similar to otherTweet
+	 * 
+	 * @param otherTweet : heard tweet
 	 */
 	public void learn(Tweet othertweet){
 		if (this.equals(othertweet))
