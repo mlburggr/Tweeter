@@ -1,4 +1,6 @@
-package com.tweeter.app;
+package com.tweeter.app.globals;
+
+import com.tweeter.app.birds.Bird;
 
 public class Cell {
 	private int locationX;
@@ -35,11 +37,11 @@ public class Cell {
 		return null;
 	}
 	
-	public void setNeighbors(Cell[] n){
+	public synchronized void setNeighbors(Cell[] n){
 		this.neighbours = n;
 	}
 	
-	public void setBird(Bird b, boolean hasB){
+	public synchronized void setBird(Bird b, boolean hasB){
 		this.cellBird = b;
 		this.hasBird = hasB;
 	}

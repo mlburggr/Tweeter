@@ -1,4 +1,4 @@
-package com.tweeter.app;
+package com.tweeter.app.sound;
 
 // Enumeration for the Note object
 // 	-name stores the key corresponding to this note

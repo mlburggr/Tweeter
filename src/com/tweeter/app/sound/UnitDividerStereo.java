@@ -1,4 +1,4 @@
-package com.tweeter.app;
+package com.tweeter.app.sound;
 
 import com.jsyn.ports.UnitInputPort;
 import com.jsyn.ports.UnitOutputPort;
@@ -41,6 +41,19 @@ public class UnitDividerStereo extends UnitDivider {
 		
 		dividerGenStereo.function.set(divider);
 
+	}
+	
+	/**
+	 * Remove an input
+	 *
+	 * @param oldUnit : unit to be removed
+	 */
+	public void removeInput(UnitOutputPort oldUnit){
+		super.removeInput(oldUnit);
+		
+		oldUnit.disconnect(1, inputStereo, 0 );
+		
+		dividerGenStereo.function.set(divider);
 	}
 	
 }

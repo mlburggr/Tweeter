@@ -1,4 +1,4 @@
-package com.tweeter.app;
+package com.tweeter.app.sound;
 
 import com.jsyn.data.Function;
 import com.jsyn.ports.UnitInputPort;
@@ -46,6 +46,23 @@ public class UnitDivider extends Circuit {
 		newUnit.connect(0, inputMono, 0 );
 		
 		units++;
+		
+		divider = new Function() { 
+			public double evaluate( double x ){
+		return  (x/units) - .1; }};
+		
+		dividerGenMono.function.set(divider);
+	}
+	
+	/**
+	 * remove an input
+	 *
+	 * @param oldUnit : unit to be added
+	 */
+	public void removeInput(UnitOutputPort oldUnit){
+		oldUnit.disconnect(0, inputMono, 0 );
+		
+		units--;
 		
 		divider = new Function() { 
 			public double evaluate( double x ){

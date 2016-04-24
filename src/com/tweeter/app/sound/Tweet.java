@@ -1,9 +1,12 @@
-package com.tweeter.app;
+package com.tweeter.app.sound;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.Random;
 
-import com.tweeter.app.Note;
+import com.tweeter.app.birds.BirdComputer;
+import com.tweeter.app.globals.TweetQueue;
+import com.tweeter.app.sound.Note;
+
 import java.lang.Math.*;
 
 /**
@@ -12,6 +15,11 @@ import java.lang.Math.*;
  *
  */
 public class Tweet extends LinkedList<Note>{
+	
+	/**
+	 * I don't know what the fuck this is for.
+	 */
+	private static final long serialVersionUID = 1L;
 	
 	/**
 	 * number of set (immutable) notes in the tweet.
@@ -170,15 +178,12 @@ public class Tweet extends LinkedList<Note>{
 	 * @param args
 	 */
 	public static void main(String[] args){
-		GlobalTweetPlayer testplyr = new GlobalTweetPlayer();
-		BirdComputer testBird = new BirdComputer(5,0);
-		testplyr.add( testBird.getId() );
-		testBird.tweet(testplyr, new TweetQueue(1), 30, 5, 0);
+		BirdComputer testBird = new BirdComputer(5,0, new Object(), new Object() );
+		testBird.tweetSynth.queueTweet(testBird.getTweet(), 0);
 		
 		try {
-			Thread.sleep( (long) (testBird.tweet.size() * Note.DURATION_SUM * 1000) );
+			Thread.sleep( (long) (testBird.getTweet().size() * Note.DURATION_SUM * 1000) );
 		} catch (InterruptedException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		

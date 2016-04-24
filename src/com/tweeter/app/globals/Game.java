@@ -1,4 +1,4 @@
-package com.tweeter.app;
+package com.tweeter.app.globals;
 import org.newdawn.slick.BasicGame;
 import org.newdawn.slick.Color;
 import org.newdawn.slick.GameContainer;
@@ -7,6 +7,10 @@ import org.newdawn.slick.SlickException;
 import org.newdawn.slick.UnicodeFont;
 import org.newdawn.slick.font.effects.ColorEffect;
 import org.newdawn.slick.state.StateBasedGame;
+
+import com.tweeter.app.states.NewGameSettingsState;
+import com.tweeter.app.states.TitleState;
+import com.tweeter.app.states.TweeterState;
 
 public class Game extends StateBasedGame{
 	private Map map;
@@ -19,7 +23,6 @@ public class Game extends StateBasedGame{
 
 	public Game(String title) {
 		super(title);
-		this.map = new Map(5,5);
 	}
 
 

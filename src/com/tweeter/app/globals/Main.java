@@ -1,4 +1,4 @@
-package com.tweeter.app;
+package com.tweeter.app.globals;
 import org.newdawn.slick.AppGameContainer;
 import org.newdawn.slick.SlickException;
 

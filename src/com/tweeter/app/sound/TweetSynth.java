@@ -1,18 +1,19 @@
-package com.tweeter.app;
+package com.tweeter.app.sound;
 
-
-import java.util.Random;
 
 import com.jsyn.data.Function;
 import com.jsyn.data.SegmentedEnvelope;
-import com.jsyn.ports.UnitInputPort;
 import com.jsyn.ports.UnitOutputPort;
-import com.jsyn.unitgen.*;
+import com.jsyn.unitgen.Circuit;
+import com.jsyn.unitgen.FunctionEvaluator;
+import com.jsyn.unitgen.Pan;
+import com.jsyn.unitgen.PassThrough;
+import com.jsyn.unitgen.SineOscillator;
+import com.jsyn.unitgen.VariableRateMonoReader;
 
 
 public class TweetSynth extends Circuit{
 	// Constants
-	private static Random r = new Random(42);
 	private static final int HARMONIC1 = 3;
 	private static final int HARMONIC2 = 5;
 	private static final int NUMUNITS = 3;
@@ -116,19 +117,16 @@ public class TweetSynth extends Circuit{
 	 * 
 	 * @param tweet
 	 */
-	public void queueTweet(Tweet tweet, double xposition, double bposition, double delay){
+	public void queueTweet(Tweet tweet, double xposition){
 			Note [] tweetArr = tweet.toArray( new Note [0]);
 			
 			// set envelope data for pan and frequency
 			double [] panDat = { 0, xposition } ; 
-			double [] ampDat = { 0, bposition } ;
 			
-			double [] tweetFreqDat = new double[4 * (tweetArr.length+1) + 2]; 
+			double [] tweetFreqDat = new double[4 * (tweetArr.length+1)]; 
 			
 			// Translate tweet
-			tweetFreqDat[0] = delay *  7;
-			tweetFreqDat[1] = 0;
-			for (int i =2 ,j = 0; i < (tweetArr.length * 4) + 2; i += 4, j++){
+			for (int i =0 ,j = 0; i < (tweetArr.length * 4) + 2; i += 4, j++){
 				tweetFreqDat[i] = Note.DURATION_3 ;
 				tweetFreqDat[i+1] = Note.BASE * (Math.pow(Note.SEMITONE, tweetArr[j].semi));
 				tweetFreqDat[i+2] = Note.DURATION_SUM - Note.DURATION_3; 
@@ -144,8 +142,6 @@ public class TweetSynth extends Circuit{
 			
 			tweetFreqEnv.dataQueue.queue( new SegmentedEnvelope(tweetFreqDat) );
 			panEnv.dataQueue.queue( new SegmentedEnvelope(panDat) );
-			ampEnv.dataQueue.queue( new SegmentedEnvelope(ampDat) );
-
 	}
 
 }

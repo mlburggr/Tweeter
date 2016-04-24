@@ -1,4 +1,4 @@
-package com.tweeter.app;
+package com.tweeter.app.states;
 
 import org.newdawn.slick.AngelCodeFont;
 import org.newdawn.slick.Color;
@@ -69,7 +69,6 @@ public class TitleState extends BasicGameState {
 
 	@Override
 	public int getID() {
-		// TODO Auto-generated method stub
 		return ID;
 	}
 

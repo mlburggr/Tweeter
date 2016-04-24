@@ -1,4 +1,4 @@
-package com.tweeter.app;
+package com.tweeter.app.states;
 
 import org.newdawn.slick.AngelCodeFont;
 import org.newdawn.slick.Color;
@@ -22,10 +22,13 @@ public class NewGameSettingsState extends BasicGameState {
 	private Image playButtonImage;
 	private MouseOverArea playButtonArea;
 	private StateBasedGame game;
-	public static String sizeText;
-	public static String npcText;
-	public static String birdEnergyText;
 	private Image bgImage;
+
+	public static int birdEnergy;
+
+	public static int npcSize;
+
+	public static int mapSize;
 
 	@Override
 	public void init(GameContainer container, StateBasedGame game) throws SlickException {
@@ -49,9 +52,9 @@ public class NewGameSettingsState extends BasicGameState {
 			return;
 		}
 		graphics.drawImage(bgImage, 0, 0);
-		font.drawString(50, 50, "Size of Field (n x n):", Color.white);
-		font.drawString(50, 150, "Inital NPCs:", Color.white);
-		font.drawString(50, 250, "Max Energy:", Color.white);
+		font.drawString(50, 50, "Size of Forest (n x n):", Color.white);
+		font.drawString(50, 150, "Inital Bird Population:", Color.white);
+		font.drawString(50, 250, "Maximum Bird Energy:", Color.white);
 		sizeField.render(container, graphics);
 		npcField.render(container, graphics);
 		birdEnergyField.render(container, graphics);
@@ -59,36 +62,60 @@ public class NewGameSettingsState extends BasicGameState {
 	}
 
 	@Override
-	public void update(GameContainer arg0, StateBasedGame arg1, int arg2) throws SlickException {
-		// TODO Auto-generated method stub
-		
-	}
+	public void update(GameContainer arg0, StateBasedGame arg1, int arg2) throws SlickException {}
 	
 	@Override
-	public void mouseClicked(int button, int x, int y, int clickCount){
-		super.mouseClicked(button, x, y, clickCount);
-		this.npcText = npcField.getText();
-		this.sizeText = sizeField.getText();
-		this.birdEnergyText = birdEnergyField.getText();
-		
-		if(sizeText.equals("") || npcText.equals("")
-				|| birdEnergyText.equals("")){
-			System.out.println("Enter a value!");
-			return;
-		}
-		int sizeInt = Integer.parseInt(sizeText);
-		if(sizeInt < 5){
-			System.out.println("Board size must be larger than 4");
-			return;
-		}
+	public void mouseReleased(int button, int x, int y){
+		super.mouseReleased(button, x, y);
 		
 		//This is really fucking lame, There's no abstraction for this?
 		//no dude, slick2d is hardcore
-		if (x >= playButtonArea.getX() && 
-			x <= playButtonArea.getX() + playButtonArea.getWidth() && 
-			y >= playButtonArea.getY() && 
-			y <= playButtonArea.getY() + playButtonArea.getHeight()) {
-				game.enterState(TweeterState.ID);
+		//oi vey dude
+		if (playButtonArea.isMouseOver()) {
+			// input checking on map size value
+			try {
+				mapSize = Integer.parseInt( sizeField.getText() );	
+
+				if (mapSize < 5) {
+					System.out.println("Board size must be larger than 4");
+					return; }
+				
+			} catch(NumberFormatException e) {
+				System.out.println("Please type an integer value!");
+				sizeField.setText("");
+				return;
+			}
+			
+			// input checking on bird population
+			try {
+				npcSize = Integer.parseInt( npcField.getText() );
+				
+				if (npcSize < 0) {
+					System.out.println("Please type a positive integer value!");
+					return; }
+
+			} catch(NumberFormatException e) {
+				System.out.println("Please type an integer value!");
+				npcField.setText("");
+				return;
+			}
+			
+			// input checking on bird energy
+			try {
+				birdEnergy = Integer.parseInt( birdEnergyField.getText() );
+				
+				if(birdEnergy < 1) {
+					System.out.println("Bird Energy must be larger than 1");
+					return; }
+
+			} catch(NumberFormatException e) {
+				System.out.println("Please type an integer value!");
+				birdEnergyField.setText("");
+				return;
+			}
+
+			
+			game.enterState(TweeterState.ID);
 		}
 		
 	}
@@ -96,7 +123,6 @@ public class NewGameSettingsState extends BasicGameState {
 
 	@Override
 	public int getID() {
-		// TODO Auto-generated method stub
 		return ID;
 	}
 	
