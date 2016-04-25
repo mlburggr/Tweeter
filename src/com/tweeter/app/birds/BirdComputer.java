@@ -326,19 +326,34 @@ public class BirdComputer extends Bird implements Runnable{
 	/**
 	 * Checks the surrounding spaces and attacks the bird
 	 * 
-	 * @param x
-	 * @param y
-	 * 
-	 * TODO Attack method
+	 * @param x : x coordinate of target
+	 * @param y : y coordinate of target
 	 */
 	public void attack(int x, int y) {
-		this.health -= DAMAGE;
-
+				
+		boolean firstChoice = 0.5 < Math.random() ;
+		boolean foundBird = false;
 		Bird enemy = null;
+		int i = 0;
 		
-		
+		// Find a bird to attack
+		while ( !foundBird && (i <= 1)){
+			if (posX < x) {
+				if (posY < y)
+					enemy = (firstChoice ? Global.map.getBird(posX, posY + 1) : Global.map.getBird(posX - 1, posY));
+				else
+					enemy = (firstChoice ? Global.map.getBird(posX, posY + 1) : Global.map.getBird(posX - 1, posY)); }
+			else if (posY < y)
+				enemy = (firstChoice ? Global.map.getBird(posX, posY + 1) : Global.map.getBird(posX - 1, posY));
+			else 
+				enemy = (firstChoice ? Global.map.getBird(posX, posY - 1) : Global.map.getBird(posX - 1, posY));
+			
+			foundBird = null == enemy;
+			firstChoice = !firstChoice;
+			i++; }
 		
 		if ( !(enemy == null) ) {
+			this.health -= DAMAGE;
 			enemy.health -= DAMAGE;
 			// check if this bird dies
 			if (this.health <= 0)
