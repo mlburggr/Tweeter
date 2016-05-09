@@ -72,7 +72,7 @@ public class TweeterState extends BasicGameState {
 		Global.map = new Map(mapSize, mapSize, width, height);
 		Global.tweetQueue = new TweetQueue(20) ;
 		
-		Bird.ENERGY_RECOVERY = 100 / birdEnergyLimit;
+		//Bird.ENERGY_RECOVERY = 100 / birdEnergyLimit;
 		Bird.ENERGY_COST = Bird.ENERGY_RECOVERY / 4;
 		
 		// Initialize Player bird and add a synth for it to the tweet player
@@ -81,7 +81,7 @@ public class TweeterState extends BasicGameState {
 		Random random = new Random();
 		for (int i = 0; i<npcBirdCount; i++) {
 			BirdComputer b = new BirdComputer(random.nextInt(mapSize), random.nextInt(mapSize), energyLock, moveLock); 
-			threads.add( new Thread(b) );}
+			threads.add( new Thread(b) ); }
 		
 		energyTimePassed = 0;
 		moveTimePassed = 0;
